@@ -1,0 +1,2579 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<title>STAK × BADCLUB · STAK DAY · 06.06.2026</title>
+<meta name="viewport" content="width=1920">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800;900&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f1ede4;
+  --paper-strong:#fbf7ef;
+  --paper-warm:#ece4d4;
+  --carbon:#0c0c10;
+  --carbon-deep:#06060a;
+  --ink:#0e0d0b;
+  --signal:#eb1c24;
+  --signal-deep:#b3141a;
+  --orange:#ff9048;
+  --gold:#ffb700;
+  --acid:#cdff3a;
+  --steel:#b9b1a5;
+  --muted:#5d5952;
+  --line-light:rgba(14,13,11,.12);
+  --line-dark:rgba(255,255,255,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact;}
+html,body{background:#0a0a0c;font-family:"IBM Plex Sans",sans-serif;color:var(--ink);}
+.deck{display:flex;flex-direction:column;align-items:center;gap:0;}
+
+/* ────── SCREEN scaling: keep 1920×1080 layout, scale to viewport ────── */
+/* JS sets --screen-scale based on actual viewport width / 1920.
+   We use that variable both in transform AND in the negative margin
+   that compensates for transform:scale not affecting layout box. */
+@media screen{
+  html,body{overflow-x:hidden;width:100%;}
+  .deck{width:100vw;align-items:flex-start;}
+  .slide{
+    transform-origin:top left;
+    transform:scale(var(--screen-scale, 1));
+    /* compensate empty space below scaled slide */
+    margin-bottom:calc(1080px * (var(--screen-scale, 1) - 1));
+  }
+}
+
+/* slide canvas */
+.slide{
+  width:1920px;height:1080px;position:relative;overflow:hidden;
+  page-break-after:always;break-after:page;
+  background:var(--paper);
+  isolation:isolate;
+}
+.slide:last-child{page-break-after:auto;}
+.slide > .body, .slide > .chrome-top, .slide > .chrome-bot,
+.slide > .red-bar, .slide > .ticker, .slide > .stak-seal{
+  position:absolute;z-index:5;
+}
+
+/* ═════════════════════════════════════════════════════
+   ATOMS — типографика, чипы, эффекты
+   ═════════════════════════════════════════════════════ */
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace;font-size:14px;letter-spacing:.32em;
+  text-transform:uppercase;font-weight:500;
+}
+.display{
+  font-family:"Unbounded",sans-serif;font-weight:800;line-height:.86;
+  letter-spacing:-.07em;text-transform:uppercase;
+}
+.mono{font-family:"IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.22em;}
+
+/* SIGNATURE shadow stacks — для тяжёлой типографики */
+.shadow-stack-light{
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.25),
+    0 2px 0 rgba(14,13,11,.06),
+    0 18px 32px rgba(14,13,11,.18),
+    0 32px 64px rgba(14,13,11,.12);
+}
+.shadow-stack-dark{
+  text-shadow:
+    2px 2px 0 var(--signal),
+    4px 4px 0 rgba(0,0,0,.5),
+    0 28px 60px rgba(235,28,36,.32),
+    0 0 80px rgba(255,255,255,.08);
+}
+.shadow-stack-emboss{
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.22),
+    -1px -1px 0 rgba(14,13,11,.4),
+    0 30px 64px rgba(14,13,11,.22);
+}
+.glow-red{ text-shadow: 0 0 22px rgba(235,28,36,.45), 0 0 64px rgba(235,28,36,.28); }
+.glow-orange{ text-shadow: 0 0 22px rgba(255,144,72,.5), 0 0 64px rgba(255,144,72,.28); }
+
+/* OUTLINE display — большие "пустотелые" буквы */
+.outline-text{
+  color:transparent;
+  -webkit-text-stroke:2px currentColor;
+}
+
+/* STICKER — наклейка с микро-наклоном */
+.sticker{
+  display:inline-flex;align-items:center;justify-content:center;
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.32em;
+  text-transform:uppercase;font-weight:700;
+  padding:11px 16px;background:#fff;color:#000;
+  transform:rotate(-3deg);
+  box-shadow:
+    0 1px 0 rgba(0,0,0,.04),
+    0 14px 26px -10px rgba(0,0,0,.42),
+    0 4px 10px -2px rgba(0,0,0,.18);
+}
+.sticker.red{background:var(--signal);color:#fff;
+  box-shadow:0 14px 28px -10px rgba(235,28,36,.55),0 4px 12px -2px rgba(235,28,36,.32);}
+.sticker.gold{background:var(--gold);color:#0c0c10;}
+.sticker.outline{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.42);box-shadow:none;}
+.sticker.tilt-r{transform:rotate(3deg);}
+.sticker.tilt-l{transform:rotate(-5deg);}
+
+/* SIGNAL CHIP — пилюля с пульсирующей точкой */
+.signal-chip{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:11px 16px;background:var(--signal);color:#fff;
+  font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:700;
+  letter-spacing:.3em;text-transform:uppercase;
+  box-shadow:0 18px 36px -12px rgba(235,28,36,.55);
+}
+.signal-chip::before{
+  content:"";width:8px;height:8px;background:#fff;border-radius:50%;
+  box-shadow:0 0 14px rgba(255,255,255,.95);
+  animation:pulse 1.4s infinite;
+}
+@keyframes pulse{50%{opacity:.4;transform:scale(.85);}}
+
+/* EDITORIAL LABEL — серый чип с красным маркером */
+.editorial-label{
+  display:inline-flex;align-items:center;gap:14px;
+  border:1px solid rgba(14,13,11,.16);background:rgba(255,255,255,.78);
+  padding:13px 18px;font-family:"IBM Plex Mono",monospace;font-size:12px;
+  font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--ink);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+}
+.editorial-label::before{
+  content:"";display:block;width:10px;height:10px;background:var(--signal);
+  box-shadow:0 0 10px rgba(235,28,36,.45);
+}
+.editorial-label.dark{
+  background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.22);color:#fff;
+}
+
+/* KINETIC strip / marquee */
+.kinetic{
+  display:flex;gap:36px;border-top:1px solid var(--line-dark);
+  border-bottom:1px solid var(--line-dark);padding:18px 0;overflow:hidden;
+  white-space:nowrap;
+}
+.kinetic span{
+  font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:600;
+  letter-spacing:.32em;text-transform:uppercase;color:rgba(255,255,255,.7);
+}
+.kinetic span::after{content:" /// ";color:rgba(255,255,255,.32);margin-left:36px;}
+.kinetic.light{border-color:var(--line-light);}
+.kinetic.light span{color:rgba(14,13,11,.7);}
+.kinetic.light span::after{color:rgba(14,13,11,.28);}
+
+/* Глоу-полоска */
+.glow-line{
+  position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--signal),transparent);
+  filter:blur(.5px);
+}
+.glow-line.bright{
+  background:linear-gradient(90deg,transparent 10%,var(--signal) 50%,transparent 90%);
+  box-shadow:0 0 20px rgba(235,28,36,.5);
+}
+
+/* Сетки и текстуры */
+.dot-grid{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:80px 80px;background-position:center center;
+}
+.dot-grid.light{
+  background-image:
+    linear-gradient(rgba(14,13,11,.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(14,13,11,.06) 1px,transparent 1px);
+}
+.dot-overlay{
+  position:absolute;inset:0;pointer-events:none;opacity:.18;
+  background-image:radial-gradient(rgba(255,255,255,.4) .9px,transparent .9px);
+  background-size:6px 6px;
+  mix-blend-mode:screen;
+}
+.dot-overlay.light{
+  opacity:.13;
+  background-image:radial-gradient(rgba(14,13,11,.45) .9px,transparent .9px);
+  mix-blend-mode:multiply;
+}
+.noise{
+  position:absolute;inset:0;pointer-events:none;opacity:.085;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.92' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.85'/></svg>");
+}
+.scanlines{
+  position:absolute;inset:0;pointer-events:none;opacity:.07;mix-blend-mode:overlay;
+  background-image:repeating-linear-gradient(0deg,#000 0,#000 1px,transparent 1px,transparent 3px);
+}
+
+/* CINEMATIC FX — lens flares, light beams, vignettes */
+.lens-flare{
+  position:absolute;pointer-events:none;z-index:1;
+  width:520px;height:520px;border-radius:50%;
+  background:radial-gradient(circle,
+    rgba(255,255,255,.45) 0%,
+    rgba(235,28,36,.3) 12%,
+    rgba(255,144,72,.18) 30%,
+    transparent 62%);
+  filter:blur(8px);mix-blend-mode:screen;
+}
+.lens-flare.tl{top:-180px;left:-160px;}
+.lens-flare.tr{top:-180px;right:-160px;}
+.lens-flare.br{bottom:-200px;right:-180px;}
+.lens-flare.bl{bottom:-200px;left:-180px;}
+.lens-flare.center{top:50%;left:50%;transform:translate(-50%,-50%);width:760px;height:760px;}
+.lens-flare.orange{background:radial-gradient(circle,
+  rgba(255,210,140,.5) 0%,
+  rgba(255,144,72,.35) 16%,
+  rgba(235,28,36,.18) 36%,
+  transparent 64%);}
+.lens-flare.cool{background:radial-gradient(circle,
+  rgba(180,200,255,.32) 0%,
+  rgba(110,130,200,.18) 28%,
+  transparent 60%);}
+.lens-flare.soft{filter:blur(14px);opacity:.7;}
+
+.light-beam{
+  position:absolute;pointer-events:none;z-index:1;
+  width:140%;height:120%;left:-20%;top:-10%;
+  background:linear-gradient(108deg,
+    transparent 35%,
+    rgba(255,255,255,.04) 46%,
+    rgba(255,144,72,.08) 50%,
+    rgba(255,255,255,.04) 54%,
+    transparent 65%);
+  mix-blend-mode:screen;pointer-events:none;
+  transform:rotate(-4deg);
+  filter:blur(6px);
+}
+.light-beam.red{
+  background:linear-gradient(108deg,
+    transparent 38%,
+    rgba(235,28,36,.22) 48%,
+    rgba(255,80,90,.12) 52%,
+    transparent 62%);
+}
+.light-beam.cross{
+  transform:rotate(106deg);
+  background:linear-gradient(108deg,
+    transparent 40%,
+    rgba(255,255,255,.06) 50%,
+    transparent 60%);
+}
+
+.edge-vignette{
+  position:absolute;inset:0;pointer-events:none;z-index:1;
+  background:
+    radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.55) 100%),
+    linear-gradient(180deg,rgba(0,0,0,.18) 0%,transparent 18%,transparent 82%,rgba(0,0,0,.32) 100%);
+}
+.edge-vignette.light{
+  background:
+    radial-gradient(ellipse at center,transparent 55%,rgba(14,13,11,.16) 100%),
+    linear-gradient(180deg,rgba(14,13,11,.04) 0%,transparent 22%,transparent 80%,rgba(14,13,11,.08) 100%);
+}
+
+.glow-orb{
+  position:absolute;pointer-events:none;z-index:1;border-radius:50%;
+  filter:blur(48px);opacity:.85;mix-blend-mode:screen;
+}
+.glow-orb.red{background:radial-gradient(circle,rgba(235,28,36,.7),transparent 70%);}
+.glow-orb.orange{background:radial-gradient(circle,rgba(255,144,72,.65),transparent 70%);}
+.glow-orb.white{background:radial-gradient(circle,rgba(255,255,255,.45),transparent 70%);}
+
+/* Premium card depth — volumetric layered shadow */
+.card-depth{
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.08) inset,
+    0 -1px 0 rgba(0,0,0,.4) inset,
+    0 14px 28px -14px rgba(0,0,0,.5),
+    0 30px 60px -28px rgba(0,0,0,.6),
+    0 60px 120px -50px rgba(235,28,36,.18);
+}
+.card-depth-light{
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.6) inset,
+    0 -1px 0 rgba(0,0,0,.05) inset,
+    0 14px 28px -14px rgba(14,13,11,.18),
+    0 30px 60px -28px rgba(14,13,11,.22),
+    0 60px 120px -50px rgba(235,28,36,.12);
+}
+
+/* PHOTO TREATMENTS */
+.ph{
+  position:relative;overflow:hidden;background:#0a0a0c;
+}
+.ph img{width:100%;height:100%;object-fit:cover;display:block;
+  filter:contrast(1.08) saturate(1.05) brightness(1.02);}
+.ph--duotone-red img{
+  filter:contrast(1.25) saturate(0) brightness(.95);
+}
+.ph--duotone-red::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(160deg,rgba(235,28,36,.85) 0%,rgba(120,10,16,.92) 100%);
+  mix-blend-mode:multiply;
+}
+.ph--duotone-red::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(160deg,rgba(255,80,90,.4) 0%,transparent 60%);
+  mix-blend-mode:screen;
+}
+.ph--burn::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 100%,rgba(0,0,0,.55),transparent 60%);
+}
+.ph--noir img{filter:contrast(1.18) saturate(.9) brightness(.94);}
+.ph--noir::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.7));
+}
+.ph--filmgrain::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.18;mix-blend-mode:overlay;z-index:2;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23g)' opacity='.95'/></svg>");
+}
+
+/* photo-frame — стикер-наклейка для фото-кадров */
+.ph-frame{position:relative;}
+.ph-frame::before{
+  content:"";position:absolute;inset:14px;border:1px solid rgba(255,255,255,.18);pointer-events:none;z-index:3;
+}
+.ph-stamp{
+  position:absolute;left:18px;top:18px;z-index:4;
+  background:var(--signal);color:#fff;
+  font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:700;letter-spacing:.32em;
+  padding:8px 12px;text-transform:uppercase;
+  box-shadow:0 12px 26px -8px rgba(235,28,36,.55);
+}
+.ph-cap{
+  position:absolute;left:0;right:0;bottom:0;padding:18px 22px;z-index:4;
+  background:linear-gradient(0deg,rgba(0,0,0,.92),transparent);
+  color:#fff;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.32em;text-transform:uppercase;
+  display:flex;justify-content:space-between;align-items:flex-end;gap:14px;
+}
+.ph-cap .v{font-family:"Unbounded",sans-serif;font-weight:700;font-size:24px;letter-spacing:-.03em;color:#fff;line-height:.95;}
+
+/* CHROME (top + bottom strips on every slide) */
+.chrome-top, .chrome-bot{
+  position:absolute;left:64px;right:64px;display:flex;align-items:center;
+  justify-content:space-between;font-family:"IBM Plex Mono",monospace;
+  font-size:12px;letter-spacing:.32em;text-transform:uppercase;font-weight:600;
+}
+.chrome-top{top:48px;}.chrome-bot{bottom:48px;}
+.chrome-mark{display:flex;align-items:center;gap:12px;}
+.chrome-mark .stak{
+  display:inline-flex;align-items:center;justify-content:center;
+  height:34px;padding:0 8px;
+  background:linear-gradient(160deg,var(--signal),var(--signal-deep));
+  box-shadow:
+    0 10px 22px -6px rgba(235,28,36,.55),
+    inset 0 1px 0 rgba(255,255,255,.2),
+    inset 0 -1px 0 rgba(0,0,0,.25);
+}
+.chrome-mark .stak img{height:22px;width:auto;display:block;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.4));}
+.chrome-mark .tail{
+  font-family:"Unbounded",sans-serif;font-weight:800;font-size:18px;
+  letter-spacing:-.04em;
+  display:inline-flex;align-items:baseline;gap:7px;
+}
+.chrome-mark .tail .x{
+  font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:13px;
+  letter-spacing:0;color:var(--signal);opacity:.9;align-self:center;
+}
+.chrome-mark .tail .partner{
+  font-weight:800;letter-spacing:-.03em;
+}
+.chrome-light .chrome-top, .chrome-light .chrome-bot{color:rgba(14,13,11,.6);}
+.chrome-light .chrome-mark .tail{color:var(--carbon);}
+.chrome-dark .chrome-top, .chrome-dark .chrome-bot{color:rgba(255,255,255,.6);}
+.chrome-dark .chrome-mark .tail{color:#fff;}
+
+/* CORNER TICKS — крестики/маркеры по углам */
+.tick{position:absolute;width:14px;height:14px;}
+.tick::before,.tick::after{content:"";position:absolute;left:50%;top:50%;background:currentColor;}
+.tick::before{width:14px;height:1px;transform:translate(-50%,-50%);}
+.tick::after{width:1px;height:14px;transform:translate(-50%,-50%);}
+
+/* ═════════════════════════════════════════════════════
+   SLIDE 1 — COVER
+   ═════════════════════════════════════════════════════ */
+.s1{background:#0a0a0c;color:#fff;}
+.s1 .stage-bg{
+  position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse at 8% 18%, rgba(235,28,36,.55), transparent 40%),
+    radial-gradient(ellipse at 92% 82%, rgba(255,144,72,.4), transparent 42%),
+    radial-gradient(ellipse at 50% 50%, rgba(235,28,36,.08), transparent 70%),
+    linear-gradient(180deg,#100f17 0%,#06060a 100%);
+}
+.s1 .stage-bg::before{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 35% 5%, rgba(255,210,160,.18), transparent 45%),
+    radial-gradient(ellipse at 65% 95%, rgba(120,30,40,.3), transparent 50%);
+  mix-blend-mode:screen;
+}
+.s1 .stage-bg-old{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 8% 18%, rgba(235,28,36,.42), transparent 38%),
+    radial-gradient(ellipse at 92% 84%, rgba(255,144,72,.34), transparent 38%),
+    radial-gradient(ellipse at 50% 60%, rgba(235,28,36,.08), transparent 70%),
+    linear-gradient(180deg,#0d0d11 0%,#06060a 100%);
+}
+.s1 .ph-cover{
+  position:absolute;right:-3%;top:0;bottom:0;width:46%;opacity:.42;
+  filter:contrast(1.18) saturate(1.05) brightness(1.05);
+}
+.s1 .ph-cover img{width:100%;height:100%;object-fit:cover;object-position:center 30%;}
+.s1 .ph-cover::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(270deg,transparent 0%,#0a0a0c 90%);
+}
+.s1 .ghost{
+  position:absolute;left:-4%;bottom:-14%;font-family:"Unbounded",sans-serif;
+  font-weight:900;font-size:820px;line-height:.78;letter-spacing:-.09em;
+  color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.06);
+  text-transform:uppercase;pointer-events:none;
+}
+.s1 .ghost-2{
+  position:absolute;right:-2%;top:-4%;font-family:"Unbounded",sans-serif;
+  font-weight:900;font-size:280px;line-height:.78;letter-spacing:-.09em;
+  color:transparent;-webkit-text-stroke:1px rgba(235,28,36,.34);
+  text-transform:uppercase;pointer-events:none;text-align:right;
+}
+.s1 .body{
+  position:absolute;inset:120px 96px 80px 96px;display:flex;flex-direction:column;
+  justify-content:space-between;gap:24px;
+}
+.s1 .top-row{display:flex;justify-content:space-between;align-items:flex-start;gap:48px;}
+.s1 .top-meta{display:flex;flex-direction:column;gap:18px;align-items:flex-end;color:rgba(255,255,255,.72);}
+.s1 .badge-row{display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+.s1 h1.title{
+  font-family:"Unbounded",sans-serif;font-weight:900;
+  font-size:188px;line-height:.82;letter-spacing:-.085em;color:#fff;text-transform:uppercase;
+  text-shadow:
+    2px 2px 0 var(--signal),
+    4px 4px 0 rgba(0,0,0,.55),
+    0 32px 80px rgba(235,28,36,.32),
+    0 0 80px rgba(255,255,255,.06);
+}
+.s1 h1.title em{font-style:normal;color:var(--signal);text-shadow:
+    2px 2px 0 #000,
+    0 0 32px rgba(235,28,36,.6),
+    0 32px 80px rgba(235,28,36,.4);}
+.s1 h1.title .x{
+  display:inline-block;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.85);
+  margin:0 .04em;text-shadow:none;
+}
+.s1 h1.title .silicone{
+  font-style:normal;color:transparent;
+  -webkit-text-stroke:2.5px rgba(255,255,255,.92);
+  text-shadow:
+    0 0 24px rgba(255,144,72,.28),
+    0 24px 64px rgba(0,0,0,.5);
+}
+.s1 .logo-trio{
+  display:flex;flex-wrap:wrap;align-items:center;gap:18px;
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.32em;
+  text-transform:uppercase;color:rgba(255,255,255,.6);font-weight:600;
+  margin-top:14px;
+}
+.s1 .logo-trio .triad{
+  display:inline-flex;align-items:center;gap:14px;padding:10px 14px;
+  border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.04);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+}
+.s1 .logo-trio .triad b{color:#fff;font-weight:700;letter-spacing:.26em;}
+.s1 .logo-trio .triad span.dot{width:6px;height:6px;background:var(--signal);box-shadow:0 0 10px rgba(235,28,36,.6);}
+.s1 .stak-mark{
+  position:absolute;left:96px;bottom:80px;width:180px;opacity:.92;
+  filter:drop-shadow(0 22px 42px rgba(0,0,0,.6)) drop-shadow(0 0 18px rgba(235,28,36,.18));
+  pointer-events:none;z-index:3;
+}
+.s1 .stak-mark img{width:100%;height:auto;display:block;mix-blend-mode:screen;opacity:.85;}
+.s1 .lead{
+  display:flex;justify-content:space-between;align-items:flex-end;gap:48px;
+}
+.s1 .lead-left{max-width:760px;}
+.s1 .lead-left h2{
+  font-family:"Unbounded",sans-serif;font-weight:600;font-size:34px;letter-spacing:-.03em;
+  text-transform:uppercase;color:#fff;line-height:1.04;
+}
+.s1 .lead-left h2 em{font-style:normal;color:var(--orange);}
+.s1 .lead-left p{margin-top:14px;color:rgba(255,255,255,.65);font-size:15px;line-height:1.65;max-width:680px;}
+.s1 .lead-meta{display:flex;flex-direction:column;gap:14px;align-items:flex-end;text-align:right;}
+.s1 .lead-meta .date{
+  font-family:"Unbounded",sans-serif;font-weight:900;font-size:84px;line-height:.85;
+  letter-spacing:-.05em;color:#fff;
+  text-shadow:0 0 24px rgba(255,144,72,.4), 0 22px 48px rgba(0,0,0,.45);
+}
+.s1 .lead-meta .date span{color:var(--orange);}
+.s1 .lead-meta .where{color:rgba(255,255,255,.7);font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.3em;text-transform:uppercase;}
+.s1 .red-bar{
+  position:absolute;left:0;right:0;bottom:0;height:20px;background:var(--signal);
+  display:flex;align-items:center;gap:48px;padding:0 48px;color:#fff;
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.32em;
+  box-shadow:0 -10px 32px rgba(235,28,36,.32);
+}
+.s1 .red-bar span{opacity:.92;}
+
+/* ═════════════════════════════════════════════════════
+   SLIDE 2 — CONCEPT
+   ═════════════════════════════════════════════════════ */
+.s2{background:var(--paper);color:var(--ink);}
+.s2 .body{position:absolute;inset:120px 96px 100px 96px;display:grid;grid-template-columns:1.4fr 1fr;gap:56px;}
+.s2 .head{display:flex;flex-direction:column;gap:24px;}
+.s2 h2{
+  font-family:"Unbounded",sans-serif;font-weight:900;font-size:128px;line-height:.86;
+  letter-spacing:-.075em;text-transform:uppercase;color:var(--carbon);
+  text-shadow:
+    1px 1px 0 rgba(255,255,255,.4),
+    0 26px 56px rgba(14,13,11,.16),
+    0 48px 100px rgba(14,13,11,.08);
+}
+.s2 h2 em{font-style:normal;color:var(--signal);
+  text-shadow:1px 1px 0 #fff,3px 3px 0 rgba(0,0,0,.16),0 26px 60px rgba(235,28,36,.32);}
+.s2 .lead{font-size:21px;line-height:1.55;color:var(--muted);max-width:780px;}
+.s2 .lead strong{color:var(--ink);font-weight:600;}
+.s2 .pillars{
+  margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+}
+.s2 .pillar{
+  border:1px solid rgba(14,13,11,.16);background:#fff;padding:18px 16px;
+  display:flex;flex-direction:column;gap:6px;
+  box-shadow:0 18px 32px -16px rgba(14,13,11,.18);
+  transition:transform .3s;
+}
+.s2 .pillar .num{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.28em;color:var(--signal);font-weight:700;
+}
+.s2 .pillar .name{
+  font-family:"Unbounded",sans-serif;font-weight:700;font-size:18px;letter-spacing:-.02em;color:var(--carbon);text-transform:uppercase;
+}
+.s2 .feat{
+  position:relative;border:1px solid rgba(14,13,11,.14);
+  background:linear-gradient(180deg,rgba(14,13,11,.97),rgba(20,20,28,.99));
+  color:#fff;padding:34px;display:flex;flex-direction:column;gap:18px;
+  clip-path:polygon(0 0,calc(100% - 32px) 0,100% 32px,100% 100%,0 100%);
+  box-shadow:0 38px 90px -20px rgba(14,13,11,.42);
+}
+.s2 .feat::before{
+  content:"";position:absolute;right:-180px;top:-180px;width:380px;height:380px;border-radius:50%;
+  background:radial-gradient(circle,rgba(235,28,36,.36),transparent 70%);pointer-events:none;
+}
+.s2 .feat .label{
+  font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.3em;
+  color:rgba(255,255,255,.65);text-transform:uppercase;font-weight:600;
+}
+.s2 .feat h3{
+  font-family:"Unbounded",sans-serif;font-weight:700;font-size:32px;letter-spacing:-.04em;
+  line-height:1;text-transform:uppercase;color:#fff;
+}
+.s2 .feat ul{list-style:none;display:grid;gap:8px;}
+.s2 .feat ul li{
+  font-size:14px;color:rgba(255,255,255,.88);padding:14px 16px;
+  border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.s2 .feat ul li::before{content:"";width:8px;height:8px;background:var(--signal);box-shadow:0 0 10px rgba(235,28,36,.6);}
+.s2 .feat ul li::after{content:"active";font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.28em;color:rgba(255,255,255,.5);text-transform:uppercase;}
+.s2 .feat .stats{
+  margin-top:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+  border-top:1px solid rgba(255,255,255,.16);padding-top:18px;
+}
+.s2 .feat .stats .cell{padding:0 12px;border-right:1px solid rgba(255,255,255,.1);}
+.s2 .feat .stats .cell:first-child{padding-left:0;}
+.s2 .feat .stats .cell:last-child{border-right:0;}
+.s2 .feat .stats .v{font-family:"Unbounded",sans-serif;font-weight:800;font-size:38px;letter-spacing:-.04em;color:#fff;line-height:.95;}
+.s2 .feat .stats .v em{font-style:normal;color:var(--orange);}
+.s2 .feat .stats .l{margin-top:4px;font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.24em;color:rgba(255,255,255,.55);text-transform:uppercase;}
+.s2 .ghost{
+  position:absolute;right:-1%;top:8%;font-family:"Unbounded",sans-serif;font-weight:800;
+  font-size:340px;letter-spacing:-.09em;line-height:.84;color:rgba(14,13,11,.05);
+  text-transform:uppercase;text-align:right;pointer-events:none;
+}
+
+/* ═════════════════════════════════════════════════════
+   SLIDE 3 — FORMAT
+   ═════════════════════════════════════════════════════ */
+.s3{background:#0a0a0c;color:#fff;}
+.s3 .stage-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 5% 0%,rgba(235,28,36,.24),transparent 32%),
+    radial-gradient(circle at 95% 100%,rgba(255,144,72,.2),transparent 32%),
+    linear-gradient(180deg,#0d0d11,#06060a);
+}
+.s3 .body{position:absolute;inset:120px 96px 130px 96px;display:flex;flex-direction:column;gap:30px;}
+.s3 .head{display:flex;justify-content:space-between;align-items:flex-end;gap:48px;}
+.s3 .head h2{
+  font-family:"Unbounded",sans-serif;font-weight:900;font-size:122px;line-height:.86;
+  letter-spacing:-.075em;text-transform:uppercase;color:#fff;max-width:1280px;
+  text-shadow:2px 2px 0 var(--signal),4px 4px 0 rgba(0,0,0,.5),0 32px 70px rgba(235,28,36,.32);
+}
+.s3 .head h2 em{font-style:normal;color:var(--signal);}
+.s3 .head .meta{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.6);text-align:right;max-width:420px;line-height:1.7;font-weight:500;}
+.s3 .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;flex:1;min-height:0;}
+.s3 .grid > .card{min-height:0;}
+.s3 .card{
+  position:relative;border:1px solid rgba(255,255,255,.16);
+  background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.01));
+  display:flex;flex-direction:column;overflow:hidden;
+  clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,0 100%);
+  transition:transform .3s;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.08) inset,
+    0 -1px 0 rgba(0,0,0,.45) inset,
+    0 26px 50px -22px rgba(0,0,0,.65),
+    0 70px 130px -50px rgba(235,28,36,.22);
+}
+.s3 .card .card-top{padding:24px 22px 18px;display:flex;flex-direction:column;gap:10px;}
+.s3 .card .num{
+  position:absolute;right:18px;top:18px;font-family:"IBM Plex Mono",monospace;
+  font-size:11px;letter-spacing:.28em;color:rgba(255,255,255,.5);z-index:5;font-weight:600;
+}
+.s3 .card .name{font-family:"Unbounded",sans-serif;font-weight:800;font-size:28px;letter-spacing:-.04em;text-transform:uppercase;color:#fff;line-height:.94;
+  text-shadow:0 14px 28px rgba(0,0,0,.5);}
+.s3 .card .desc{font-size:12px;line-height:1.5;color:rgba(255,255,255,.72);}
+.s3 .card ul{list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+.s3 .card ul li{
+  font-size:10px;color:rgba(255,255,255,.85);padding:6px 9px;line-height:1;
+  text-transform:uppercase;letter-spacing:.12em;font-family:"IBM Plex Mono",monospace;
+  border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);font-weight:500;
+}
+.s3 .card .card-photo{
+  position:relative;flex:1;overflow:hidden;min-height:0;
+  border-top:1px solid rgba(255,255,255,.14);
+}
+.s3 .card .card-photo img{width:100%;height:100%;object-fit:cover;object-position:center 28%;display:block;filter:contrast(1.12) saturate(1.1) brightness(.95);}
+.s3 .card .card-photo::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,.06) 0%,rgba(0,0,0,.7) 100%);
+}
+.s3 .card .card-photo .stamp{
+  position:absolute;left:12px;bottom:12px;display:flex;align-items:center;gap:8px;
+  font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.32em;
+  text-transform:uppercase;color:#fff;font-weight:600;
+}
+.s3 .card .card-photo .stamp::before{content:"";width:8px;height:8px;background:var(--signal);box-shadow:0 0 10px rgba(235,28,36,.5);}
+.s3 .card .card-photo .corner-mark{
+  position:absolute;right:12px;top:12px;display:flex;align-items:center;gap:6px;
+  font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.28em;
+  color:rgba(255,255,255,.85);text-transform:uppercase;
+  background:rgba(0,0,0,.6);padding:5px 8px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+}
+.s3 .card.accent{border-color:rgba(235,28,36,.32);}
+.s3 .card.accent::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:4px;z-index:2;
+  background:linear-gradient(180deg,var(--signal),var(--orange));
+  box-shadow:0 0 22px rgba(235,28,36,.5);
+}
+.s3 .ticker{
+  position:absolute;left:0;right:0;bottom:36px;
+  display:flex;gap:36px;border-top:1px solid rgba(255,255,255,.14);
+  border-bottom:1px solid rgba(255,255,255,.14);padding:14px 64px;overflow:hidden;
+  white-space:nowrap;background:rgba(255,255,255,.02);
+}
+.s3 .ticker span{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;letter-spacing:.34em;text-transform:uppercase;color:rgba(255,255,255,.55);}
+.s3 .ticker span em{font-style:normal;color:var(--signal);}
+.s3 .ticker span::after{content:" /// ";color:rgba(255,255,255,.25);margin-left:36px;}
+
+/* ═════════════════════════════════════════════════════
+   SLIDE 4 — VENUE
+   ═════════════════════════════════════════════════════ */
+.s4{background:var(--paper);color:var(--ink);}
+.s4 .body{position:absolute;inset:120px 96px 100px 96px;display:grid;grid-template-columns:.85fr 1.15fr;gap:48px;}
+.s4 .col-l{display:flex;flex-direction:column;justify-content:space-between;}
+.s4 .col-l h2{
+  font-family:"Unbounded",sans-serif;font-weight:900;font-size:108px;line-height:.86;
+  letter-spacing:-.075em;color:var(--carbon);text-transform:uppercase;margin-top:18px;
+  text-shadow:1px 1px 0 rgba(255,255,255,.4),0 26px 56px rgba(14,13,11,.18),0 50px 110px rgba(14,13,11,.08);
+}
+.s4 .col-l h2 em{font-style:normal;color:var(--signal);text-shadow:1px 1px 0 #fff,3px 3px 0 rgba(0,0,0,.18),0 26px 60px rgba(235,28,36,.34);}
+.s4 .col-l p{font-size:18px;color:var(--muted);line-height:1.6;max-width:560px;margin-top:24px;}
+.s4 .col-l p strong{color:var(--ink);font-weight:600;}
+.s4 .features{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:30px;}
+.s4 .features .f{
+  border:1px solid rgba(14,13,11,.16);background:#fff;padding:18px;
+  display:flex;flex-direction:column;gap:6px;
+  box-shadow:0 14px 28px -16px rgba(14,13,11,.18);
+}
+.s4 .features .f .l{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.28em;color:var(--signal);text-transform:uppercase;font-weight:700;}
+.s4 .features .f .v{font-family:"Unbounded",sans-serif;font-weight:700;font-size:16px;letter-spacing:-.02em;text-transform:uppercase;color:var(--carbon);}
+.s4 .col-r{display:grid;grid-template-rows:1.55fr 1fr 1fr;gap:12px;min-height:0;}
+.s4 .col-r > *{min-height:0;}
+.s4 .photo{
+  position:relative;overflow:hidden;border:1px solid rgba(14,13,11,.14);
+  background:#0a0a0c;height:100%;
+  box-shadow:0 24px 48px -20px rgba(14,13,11,.32);
+}
+.s4 .photo img{width:100%;height:100%;object-fit:cover;object-position:center 35%;filter:contrast(1.1) saturate(1.08);display:block;}
+.s4 .photo .ovr{
+  position:absolute;left:0;right:0;bottom:0;padding:24px;
+  background:linear-gradient(0deg,rgba(0,0,0,.92),transparent);
+  display:flex;justify-content:space-between;align-items:flex-end;color:#fff;gap:24px;
+}
+.s4 .photo .ovr .l{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.28em;color:rgba(255,255,255,.7);text-transform:uppercase;font-weight:600;}
+.s4 .photo .ovr .v{font-family:"Unbounded",sans-serif;font-weight:800;font-size:42px;letter-spacing:-.04em;color:#fff;line-height:.92;text-transform:uppercase;
+  text-shadow:0 18px 36px rgba(0,0,0,.5);}
+.s4 .photo-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;height:100%;min-height:0;}
+.s4 .photo-row.triple{grid-template-columns:1fr 1fr 1fr;}
+.s4 .photo-row > .photo{height:100%;}
+.s4 .photo.hero{position:relative;}
+.s4 .photo.hero img{filter:contrast(1.18) saturate(1.18) brightness(1.02);}
+.s4 .photo.hero .hero-glow{
+  position:absolute;inset:0;pointer-events:none;z-index:2;
+  background:
+    radial-gradient(circle at 50% 100%,rgba(235,28,36,.22),transparent 50%),
+    radial-gradient(circle at 100% 0%,rgba(255,144,72,.18),transparent 40%),
+    linear-gradient(180deg,transparent 55%,rgba(0,0,0,.4));
+  mix-blend-mode:screen;
+}
+.s4 .photo.hero::before{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:3px;z-index:3;
+  background:linear-gradient(90deg,transparent,var(--signal),transparent);
+  box-shadow:0 -4px 18px rgba(235,28,36,.5);
+}
+.s4 .photo-row.triple .ovr{padding:14px;}
+.s4 .photo-row.triple .ovr .v{font-size:24px;}
+.s4 .photo-row.triple .ovr .l{font-size:9px;}
+.s4 .photo .stamp-tl{
+  position:absolute;top:24px;left:24px;background:var(--signal);color:#fff;
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.32em;
+  font-weight:700;text-transform:uppercase;padding:8px 12px;
+  box-shadow:0 12px 28px -8px rgba(235,28,36,.55);
+}
+
+/* ═════════════════════════════════════════════════════
+   SLIDE 5 — AUDIENCE
+   ═════════════════════════════════════════════════════ */
+.s5{background:#0a0a0c;color:#fff;}
+.s5 .stage-bg{position:absolute;inset:0;background:
+  radial-gradient(circle at 80% 18%,rgba(255,144,72,.28),transparent 38%),
+  radial-gradient(circle at 12% 86%,rgba(235,28,36,.26),transparent 38%),
+  linear-gradient(180deg,#0a0a0c,#08080a);}
+.s5 .body{position:absolute;inset:120px 96px 100px 96px;display:grid;grid-template-columns:1fr 1fr;gap:48px;}
+.s5 h2{
+  font-family:"Unbounded",sans-serif;font-weight:900;font-size:120px;line-height:.86;
+  letter-spacing:-.075em;text-transform:uppercase;color:#fff;margin-top:20px;
+  text-shadow:2px 2px 0 var(--signal),4px 4px 0 rgba(0,0,0,.5),0 32px 70px rgba(235,28,36,.32);
+}
+.s5 h2 em{font-style:normal;color:var(--signal);}
+.s5 .age{
+  display:inline-flex;align-items:baseline;gap:14px;margin-top:24px;
+  padding:18px 24px;background:var(--signal);color:#fff;
+  box-shadow:0 24px 48px -14px rgba(235,28,36,.55);
+}
+.s5 .age .v{font-family:"Unbounded",sans-serif;font-weight:900;font-size:72px;letter-spacing:-.05em;line-height:.9;}
+.s5 .age .l{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.32em;text-transform:uppercase;font-weight:600;}
+.s5 .lists{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:32px;}
+.s5 .lists .col{
+  border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);padding:24px;
+  display:flex;flex-direction:column;gap:14px;
+}
+.s5 .lists .col .h{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.32em;color:var(--signal);text-transform:uppercase;font-weight:700;}
+.s5 .lists .col ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.s5 .lists .col ul li{font-size:14px;line-height:1.5;color:rgba(255,255,255,.88);padding-left:16px;position:relative;}
+.s5 .lists .col ul li::before{content:"";position:absolute;left:0;top:8px;width:8px;height:1px;background:var(--orange);}
+.s5 .right{display:grid;grid-template-rows:1.4fr auto auto;gap:14px;min-height:0;}
+.s5 .right > *{min-height:0;}
+.s5 .photo{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.12);height:100%;}
+.s5 .photo img{width:100%;height:100%;object-fit:cover;object-position:center 88%;filter:contrast(1.1) saturate(1.08) brightness(1.02);display:block;}
+.s5 .photo .frame{position:absolute;inset:14px;border:1px solid rgba(255,255,255,.18);pointer-events:none;}
+.s5 .photo .stamp{position:absolute;left:24px;top:24px;background:var(--signal);color:#fff;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.32em;text-transform:uppercase;padding:8px 12px;font-weight:700;
+  box-shadow:0 14px 30px -10px rgba(235,28,36,.55);}
+.s5 .photo .cap{
+  position:absolute;left:0;right:0;bottom:0;padding:22px 28px;
+  background:linear-gradient(0deg,rgba(0,0,0,.9),transparent);
+  font-family:"Unbounded",sans-serif;font-weight:700;font-size:32px;letter-spacing:-.04em;color:#fff;text-transform:uppercase;line-height:.95;
+}
+.s5 .photo .cap em{font-style:normal;color:var(--signal);}
+.s5 .stat-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.s5 .stat{
+  position:relative;
+  border:1px solid rgba(255,255,255,.16);background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.02));padding:24px;
+  display:flex;flex-direction:column;gap:10px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.08) inset,
+    0 -1px 0 rgba(0,0,0,.35) inset,
+    0 22px 44px -22px rgba(0,0,0,.55),
+    0 50px 90px -40px rgba(235,28,36,.18);
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+}
+.s5 .stat::after{
+  content:"";position:absolute;left:0;top:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);
+}
+.s5 .stat .v{font-family:"Unbounded",sans-serif;font-weight:800;font-size:48px;letter-spacing:-.05em;line-height:.92;color:#fff;
+  text-shadow:0 16px 32px rgba(0,0,0,.45);}
+.s5 .stat .v em{font-style:normal;color:var(--orange);}
+.s5 .stat .l{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.28em;color:rgba(255,255,255,.55);text-transform:uppercase;font-weight:600;}
+
+/* ═════════════════════════════════════════════════════
+   SLIDE 6 — CITY IN CITY
+   ═════════════════════════════════════════════════════ */
+.s6{background:var(--paper);color:var(--ink);}
+.s6 .body{position:absolute;inset:120px 96px 100px 96px;display:flex;flex-direction:column;gap:24px;}
+.s6 .head{display:flex;justify-content:space-between;align-items:flex-end;gap:48px;}
+.s6 h2{
+  font-family:"Unbounded",sans-serif;font-weight:900;font-size:104px;line-height:.86;
+  letter-spacing:-.075em;text-transform:uppercase;color:var(--carbon);max-width:1240px;
+  text-shadow:1px 1px 0 rgba(255,255,255,.4),0 26px 56px rgba(14,13,11,.16);
+}
+.s6 h2 em{font-style:normal;color:var(--signal);text-shadow:1px 1px 0 #fff,3px 3px 0 rgba(0,0,0,.18),0 26px 60px rgba(235,28,36,.32);}
+.s6 .head .ix{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.28em;color:var(--muted);text-align:right;text-transform:uppercase;line-height:1.7;font-weight:500;}
+.s6 .grid{display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(2,1fr);gap:14px;flex:1;min-height:0;}
+.s6 .grid > .zone{min-height:0;}
+.s6 .zone{
+  position:relative;border:1px solid rgba(14,13,11,.16);
+  background:#fff;display:flex;flex-direction:column;justify-content:space-between;
+  overflow:hidden;
+  box-shadow:0 18px 38px -22px rgba(14,13,11,.22);
+}
+.s6 .zone .zone-body{padding:22px;display:flex;flex-direction:column;justify-content:space-between;height:100%;gap:12px;}
+.s6 .zone.feat{
+  background:linear-gradient(180deg,#0c0c10,#16161e);color:#fff;
+  border-color:rgba(255,255,255,.14);
+  grid-column:span 2;
+}
+.s6 .zone.dual{grid-column:span 2;display:grid;grid-template-columns:1.25fr 1fr;}
+.s6 .zone.dual .zone-body{grid-column:1;padding:22px;}
+.s6 .zone.dual .zone-photo{grid-column:2;position:relative;overflow:hidden;background:#0a0a0c;border-left:1px solid rgba(14,13,11,.12);}
+.s6 .zone.dual .zone-photo img{width:100%;height:100%;object-fit:cover;object-position:center 35%;display:block;filter:contrast(1.12) saturate(1.06);}
+.s6 .zone.dual .zone-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.6));pointer-events:none;}
+.s6 .zone.feat::after{
+  content:"";position:absolute;right:-120px;bottom:-80px;width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,144,72,.34),transparent 70%);pointer-events:none;
+}
+.s6 .zone .num{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.32em;color:var(--signal);text-transform:uppercase;font-weight:700;}
+.s6 .zone.feat .num{color:rgba(255,255,255,.6);}
+.s6 .zone .ttl{
+  font-family:"Unbounded",sans-serif;font-weight:800;font-size:18px;letter-spacing:-.03em;
+  color:var(--carbon);text-transform:uppercase;line-height:1;margin-top:8px;
+  hyphens:none;word-break:keep-all;overflow-wrap:normal;
+}
+.s6 .zone.feat .ttl{color:#fff;font-size:38px;line-height:.94;
+  text-shadow:0 14px 32px rgba(0,0,0,.6);}
+.s6 .zone.dual .ttl{font-size:24px;}
+.s6 .zone .desc{font-size:12px;line-height:1.5;color:var(--muted);margin-top:auto;}
+.s6 .zone.feat .desc{color:rgba(255,255,255,.78);font-size:13px;}
+.s6 .zone .corner{position:absolute;top:14px;right:14px;width:10px;height:10px;background:var(--signal);z-index:2;}
+.s6 .zone.feat .corner{background:var(--orange);box-shadow:0 0 18px rgba(255,144,72,.6);}
+.s6 .zone .meta-row{display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:12px;border-top:1px dashed rgba(14,13,11,.18);font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.3em;color:rgba(0,0,0,.5);text-transform:uppercase;font-weight:600;}
+.s6 .zone .meta-row::before{content:"";width:6px;height:6px;background:var(--signal);}
+.s6 .zone.feat .meta-row{border-top-color:rgba(255,255,255,.18);color:rgba(255,255,255,.6);}
+.s6 .zone.feat .meta-row::before{background:var(--orange);}
+.s6 .ghost{position:absolute;left:-2%;top:38%;font-family:"Unbounded",sans-serif;font-weight:900;font-size:560px;letter-spacing:-.09em;color:rgba(14,13,11,.04);text-transform:uppercase;line-height:.84;pointer-events:none;}
+
+/* ═════════════════════════════════════════════════════
+   SLIDE 7 — PRE-EVENT · ДВОР 90Х (traffic engine)
+   ═════════════════════════════════════════════════════ */
+.s-dvor{background:#0a0a0c;color:#fff;}
+.s-dvor .stage-bg{position:absolute;inset:0;background:
+  radial-gradient(circle at 18% 30%,rgba(235,28,36,.40),transparent 40%),
+  radial-gradient(circle at 82% 78%,rgba(255,144,72,.26),transparent 46%),
+  linear-gradient(180deg,#0d0d11,#06060a);}
+.s-dvor .ghost{position:absolute;left:-3%;bottom:-12%;font-family:"Unbounded",sans-serif;font-weight:900;font-size:520px;letter-spacing:-.09em;color:rgba(255,255,255,.035);text-transform:uppercase;line-height:.84;pointer-events:none;}
+.s-dvor .body{position:absolute;inset:80px 72px 60px 72px;display:flex;flex-direction:column;gap:18px;}
+
+/* HEAD */
+.s-dvor .head{display:flex;justify-content:space-between;align-items:flex-start;gap:36px;}
+.s-dvor .head-left{display:flex;flex-direction:column;gap:14px;flex:1;min-width:0;}
+.s-dvor .pre-tag{display:inline-flex;align-items:center;gap:10px;align-self:flex-start;
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.4em;text-transform:uppercase;font-weight:700;
+  background:var(--signal);color:#fff;padding:9px 16px 8px;
+  box-shadow:0 14px 30px -8px rgba(235,28,36,.55);}
+.s-dvor .pre-tag::before{content:"";width:7px;height:7px;border-radius:50%;background:#fff;
+  box-shadow:0 0 0 3px rgba(255,255,255,.18);animation:dvorpulse 1.6s infinite;}
+@keyframes dvorpulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.45;transform:scale(.8);}}
+.s-dvor .title-row{display:flex;align-items:flex-end;gap:24px;}
+.s-dvor h2{
+  font-family:"Unbounded",sans-serif;font-weight:900;font-size:120px;line-height:.84;
+  letter-spacing:-.075em;text-transform:uppercase;color:#fff;
+  text-shadow:2px 2px 0 var(--signal),4px 4px 0 rgba(0,0,0,.5),0 32px 80px rgba(235,28,36,.32);
+}
+.s-dvor h2 em{font-style:normal;color:var(--signal);
+  text-shadow:2px 2px 0 #000,0 0 36px rgba(235,28,36,.55),0 32px 80px rgba(235,28,36,.4);}
+.s-dvor .by-cred{display:flex;flex-direction:column;gap:4px;padding-bottom:8px;border-left:1px solid rgba(255,255,255,.18);padding-left:16px;}
+.s-dvor .by-cred .l{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:700;}
+.s-dvor .by-cred .v{font-family:"Unbounded",sans-serif;font-weight:700;font-size:18px;letter-spacing:-.02em;text-transform:uppercase;color:#fff;line-height:1;}
+.s-dvor .by-cred .v em{font-style:normal;color:var(--orange);}
+.s-dvor .sub{font-family:"Unbounded",sans-serif;font-weight:600;font-size:18px;letter-spacing:-.02em;text-transform:uppercase;color:rgba(255,255,255,.92);line-height:1.15;max-width:1100px;}
+.s-dvor .sub em{font-style:normal;color:var(--orange);}
+.s-dvor .head-right{display:flex;flex-direction:column;gap:8px;align-items:flex-end;text-align:right;padding-top:4px;}
+.s-dvor .head-right .vs-block{
+  font-family:"Unbounded",sans-serif;font-weight:900;font-size:42px;line-height:.9;
+  letter-spacing:-.04em;color:#fff;text-transform:uppercase;
+  text-shadow:0 0 24px rgba(255,144,72,.4),0 22px 48px rgba(0,0,0,.45);
+}
+.s-dvor .head-right .vs-block em{font-style:normal;color:var(--orange);font-size:.7em;vertical-align:.05em;}
+.s-dvor .head-right .l{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.55);}
+
+/* MAIN ROW — hero + side panel */
+.s-dvor .main{display:grid;grid-template-columns:1.55fr 1fr;gap:20px;flex:1;min-height:0;}
+
+/* HERO photo — left */
+.s-dvor .hero{
+  position:relative;overflow:hidden;
+  border:1px solid rgba(255,255,255,.14);
+  background:#0a0a0c;
+  display:flex;flex-direction:column;
+  clip-path:polygon(0 0,calc(100% - 28px) 0,100% 28px,100% 100%,0 100%);
+}
+.s-dvor .hero .img-wrap{position:relative;flex:1;min-height:0;overflow:hidden;}
+.s-dvor .hero .img-wrap img{width:100%;height:100%;object-fit:cover;object-position:center 38%;display:block;
+  filter:contrast(1.08) saturate(1.05) brightness(.96);}
+.s-dvor .hero .img-wrap::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(8,8,12,.0) 50%,rgba(8,8,12,.85) 100%),
+             linear-gradient(90deg,rgba(8,8,12,.5),transparent 30%);
+  pointer-events:none;}
+.s-dvor .hero .stamp-tl{position:absolute;left:18px;top:18px;z-index:2;
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--signal);color:#fff;padding:7px 12px 6px;
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.32em;font-weight:700;text-transform:uppercase;
+  box-shadow:0 10px 24px -6px rgba(235,28,36,.55);}
+.s-dvor .hero .stamp-tl::before{content:"";width:6px;height:6px;background:#fff;border-radius:50%;}
+.s-dvor .hero .stamp-tr{position:absolute;right:18px;top:18px;z-index:2;
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.32em;font-weight:700;text-transform:uppercase;
+  background:rgba(8,8,12,.7);border:1px solid rgba(255,255,255,.22);
+  color:#fff;padding:7px 12px 6px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
+.s-dvor .hero .ovr{position:absolute;left:24px;right:24px;bottom:22px;z-index:2;
+  display:flex;justify-content:space-between;align-items:flex-end;gap:24px;}
+.s-dvor .hero .ovr .ttl{
+  font-family:"Unbounded",sans-serif;font-weight:900;font-size:46px;line-height:.9;
+  letter-spacing:-.045em;text-transform:uppercase;color:#fff;
+  text-shadow:0 12px 32px rgba(0,0,0,.55);
+}
+.s-dvor .hero .ovr .ttl em{font-style:normal;color:var(--orange);}
+.s-dvor .hero .ovr .ttl-l{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:rgba(255,255,255,.7);font-weight:600;display:block;margin-bottom:6px;}
+.s-dvor .hero .ovr .meta{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.65);text-align:right;line-height:1.6;font-weight:600;flex-shrink:0;}
+
+/* SIDE — numbers + lineup tile */
+.s-dvor .side{display:flex;flex-direction:column;gap:14px;min-height:0;}
+.s-dvor .num-card{
+  position:relative;border:1px solid rgba(255,255,255,.14);
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
+  padding:18px 22px;display:flex;flex-direction:column;gap:4px;
+}
+.s-dvor .num-card.hot{
+  border-color:rgba(235,28,36,.5);
+  background:linear-gradient(160deg,rgba(235,28,36,.18),rgba(235,28,36,.02) 70%);
+  box-shadow:0 26px 60px -22px rgba(235,28,36,.55),inset 0 1px 0 rgba(255,255,255,.06);
+}
+.s-dvor .num-card .l{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:700;}
+.s-dvor .num-card .v{
+  font-family:"Unbounded",sans-serif;font-weight:900;font-size:80px;line-height:.86;
+  letter-spacing:-.06em;color:#fff;
+}
+.s-dvor .num-card.hot .v{color:#fff;text-shadow:0 0 22px rgba(235,28,36,.45),0 22px 50px rgba(235,28,36,.4);}
+.s-dvor .num-card .v em{font-style:normal;font-size:.55em;color:var(--orange);vertical-align:.06em;margin-left:.05em;}
+.s-dvor .num-card .v sup{font-size:.3em;font-weight:700;color:rgba(255,255,255,.65);letter-spacing:.18em;text-transform:uppercase;margin-left:.08em;vertical-align:top;}
+.s-dvor .num-card .desc{font-size:12px;line-height:1.5;color:rgba(255,255,255,.7);}
+.s-dvor .num-card .desc strong{color:#fff;font-weight:600;}
+
+.s-dvor .lineup{
+  position:relative;flex:1;min-height:0;overflow:hidden;
+  border:1px solid rgba(255,255,255,.14);background:#0a0a0c;
+}
+.s-dvor .lineup img{width:100%;height:100%;object-fit:cover;object-position:center 35%;display:block;filter:contrast(1.08) saturate(1.05) brightness(.94);}
+.s-dvor .lineup::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(8,8,12,.85));pointer-events:none;}
+.s-dvor .lineup .stamp{position:absolute;left:14px;top:14px;z-index:2;
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.32em;font-weight:700;text-transform:uppercase;
+  background:rgba(8,8,12,.7);border:1px solid rgba(255,255,255,.22);
+  color:#fff;padding:6px 10px 5px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
+.s-dvor .lineup .cap{position:absolute;left:16px;right:16px;bottom:14px;z-index:2;
+  font-family:"Unbounded",sans-serif;font-weight:700;font-size:14px;letter-spacing:-.02em;text-transform:uppercase;color:#fff;line-height:1.1;}
+.s-dvor .lineup .cap em{font-style:normal;color:var(--orange);}
+
+/* RULES strip — horizontal */
+.s-dvor .rules{
+  display:flex;align-items:stretch;gap:10px;
+  padding:14px;
+  border:1px solid rgba(255,255,255,.12);
+  background:linear-gradient(180deg,rgba(20,20,26,.72),rgba(8,8,12,.94));
+  clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,0 100%);
+}
+.s-dvor .rules-ttl{display:flex;flex-direction:column;justify-content:center;gap:4px;padding:0 16px 0 12px;border-right:1px solid rgba(255,255,255,.12);min-width:200px;}
+.s-dvor .rules-ttl .l{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:700;}
+.s-dvor .rules-ttl .v{font-family:"Unbounded",sans-serif;font-weight:800;font-size:22px;letter-spacing:-.03em;text-transform:uppercase;color:#fff;line-height:.95;}
+.s-dvor .rules-ttl .v em{font-style:normal;color:var(--signal);}
+.s-dvor .rules-list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;flex:1;}
+.s-dvor .rule{
+  position:relative;border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.04);padding:12px 14px;
+  display:flex;align-items:center;gap:14px;
+}
+.s-dvor .rule.score{border-color:rgba(235,28,36,.42);background:linear-gradient(170deg,rgba(235,28,36,.16),rgba(235,28,36,.04));}
+.s-dvor .rule.fight{border-color:rgba(255,144,72,.4);background:linear-gradient(170deg,rgba(255,144,72,.14),rgba(255,144,72,.03));}
+.s-dvor .rule.coward{border-color:rgba(255,255,255,.22);}
+.s-dvor .rule .delta{
+  font-family:"Unbounded",sans-serif;font-weight:900;font-size:32px;letter-spacing:-.04em;line-height:1;
+  flex-shrink:0;min-width:64px;
+}
+.s-dvor .rule.score .delta{color:var(--signal);text-shadow:0 0 16px rgba(235,28,36,.5);}
+.s-dvor .rule.fight .delta{color:var(--orange);text-shadow:0 0 16px rgba(255,144,72,.5);}
+.s-dvor .rule.coward .delta{color:#fff;}
+.s-dvor .rule .body-r{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.s-dvor .rule .num{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.32em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:600;}
+.s-dvor .rule .name{font-family:"Unbounded",sans-serif;font-weight:700;font-size:13px;letter-spacing:-.02em;text-transform:uppercase;color:#fff;line-height:1.1;}
+
+/* CHANNELS strip — bottom */
+.s-dvor .strip{
+  display:flex;justify-content:space-between;align-items:center;gap:24px;
+  border-top:1px solid rgba(255,255,255,.12);
+  padding:10px 0 0;
+}
+.s-dvor .strip .l{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:700;}
+.s-dvor .strip .pills{display:flex;gap:6px;flex-wrap:wrap;}
+.s-dvor .strip .pills span{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.26em;text-transform:uppercase;font-weight:600;
+  border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.04);
+  color:rgba(255,255,255,.85);padding:6px 10px;
+}
+.s-dvor .strip .pills span.live{background:var(--signal);border-color:transparent;color:#fff;}
+
+/* ═════════════════════════════════════════════════════
+   SLIDE 7 — ARENA / RING NIGHT
+   ═════════════════════════════════════════════════════ */
+.s7{background:#0a0a0c;color:#fff;}
+.s7 .stage-bg{position:absolute;inset:0;background:
+  radial-gradient(circle at 22% 50%,rgba(235,28,36,.42),transparent 36%),
+  radial-gradient(circle at 80% 90%,rgba(255,144,72,.22),transparent 44%),
+  linear-gradient(180deg,#0d0d11,#06060a);}
+.s7 .body{position:absolute;inset:84px 80px 64px 80px;display:flex;flex-direction:column;gap:14px;}
+
+/* HEADER */
+.s7 .head{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;}
+.s7 .head .title-block{display:flex;flex-direction:column;gap:8px;}
+.s7 .arena-tag{display:inline-flex;align-items:center;gap:10px;align-self:flex-start;
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.4em;text-transform:uppercase;font-weight:700;
+  background:var(--signal);color:#fff;padding:8px 14px 7px;
+  box-shadow:0 12px 28px -8px rgba(235,28,36,.55);}
+.s7 .arena-tag::before{content:"";width:6px;height:6px;border-radius:50%;background:#fff;
+  box-shadow:0 0 0 3px rgba(255,255,255,.2);animation:s7pulse 1.6s infinite;}
+@keyframes s7pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.45;transform:scale(.8);}}
+.s7 h2{
+  font-family:"Unbounded",sans-serif;font-weight:900;font-size:68px;line-height:.86;
+  letter-spacing:-.07em;text-transform:uppercase;color:#fff;
+  text-shadow:2px 2px 0 var(--signal),4px 4px 0 rgba(0,0,0,.5),0 28px 60px rgba(235,28,36,.32);
+}
+.s7 h2 em{font-style:normal;color:var(--signal);}
+.s7 .lead{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.28em;color:rgba(255,255,255,.6);text-transform:uppercase;text-align:right;max-width:380px;line-height:1.65;font-weight:500;}
+
+/* ARENA layout — ring-dominant */
+.s7 .arena{display:grid;grid-template-columns:55% 1fr;gap:24px;flex:1;min-height:0;}
+
+/* ── RING zone (left, dominant) ── */
+.s7 .ring-zone{position:relative;display:flex;flex-direction:column;gap:10px;min-height:0;}
+.s7 .ring-stage{position:relative;flex:1;min-height:0;
+  border:1px solid rgba(255,255,255,.12);
+  background:radial-gradient(circle at 50% 56%,rgba(235,28,36,.22),transparent 55%),
+             linear-gradient(180deg,rgba(20,20,26,.7),rgba(8,8,12,.95));
+  overflow:hidden;clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,0 100%);}
+.s7 .ring-stage svg{position:absolute;inset:0;width:100%;height:100%;}
+
+/* sweep beam — animated rotating spotlight */
+.s7 .ring-stage::before{
+  content:"";position:absolute;left:50%;top:50%;width:160%;height:8%;
+  background:linear-gradient(90deg,transparent 35%,rgba(255,144,72,.22) 50%,transparent 65%);
+  transform-origin:left center;transform:translateX(0%) translateY(-50%);
+  animation:s7sweep 12s linear infinite;mix-blend-mode:screen;pointer-events:none;
+}
+@keyframes s7sweep{from{transform:translateY(-50%) rotate(0deg);}to{transform:translateY(-50%) rotate(360deg);}}
+
+/* HEADLINER labels around the octagon — 8 corners */
+.s7 .headliner-corner{
+  position:absolute;left:var(--x);top:var(--y);transform:translate(-50%,-50%);
+  display:flex;flex-direction:column;align-items:center;gap:1px;text-align:center;
+  pointer-events:none;text-transform:uppercase;
+  text-shadow:0 8px 18px rgba(0,0,0,.7),0 0 14px rgba(235,28,36,.3);
+  width:160px;
+}
+.s7 .headliner-corner .role{font-family:"IBM Plex Mono",monospace;font-size:7.5px;letter-spacing:.36em;font-weight:700;color:rgba(255,200,160,.62);}
+.s7 .headliner-corner .name{font-family:"Unbounded",sans-serif;font-size:18px;font-weight:800;letter-spacing:-.04em;color:#fff;line-height:.92;}
+.s7 .headliner-corner .num{font-family:"IBM Plex Mono",monospace;font-size:8px;letter-spacing:.34em;color:var(--signal);font-weight:700;margin-top:3px;}
+.s7 .headliner-corner .num::before{content:"M.E. ";color:rgba(255,255,255,.4);}
+
+/* center brand block */
+.s7 .ring-center{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;pointer-events:none;
+}
+.s7 .ring-center .badge{
+  font-family:"IBM Plex Mono",monospace;font-size:8.5px;letter-spacing:.42em;text-transform:uppercase;font-weight:700;
+  background:var(--signal);color:#fff;padding:5px 11px 4px;
+  box-shadow:0 10px 28px -8px rgba(235,28,36,.6);
+}
+.s7 .ring-center .presents{
+  font-family:"Unbounded",sans-serif;font-weight:800;font-size:14px;letter-spacing:-.025em;text-transform:uppercase;
+  color:rgba(255,255,255,.85);display:inline-flex;align-items:baseline;gap:7px;line-height:1;
+  margin-top:2px;
+}
+.s7 .ring-center .presents .x{
+  font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:12px;letter-spacing:0;
+  color:var(--signal);align-self:center;
+}
+.s7 .ring-center .brand{
+  font-family:"Unbounded",sans-serif;font-weight:900;font-size:78px;letter-spacing:-.06em;color:#fff;line-height:.84;text-transform:uppercase;
+  text-shadow:0 0 36px rgba(235,28,36,.75),0 22px 48px rgba(0,0,0,.7),3px 3px 0 var(--signal);
+}
+.s7 .ring-center .date{
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.42em;color:rgba(255,255,255,.78);font-weight:700;
+  border-top:1px solid rgba(255,255,255,.2);border-bottom:1px solid rgba(255,255,255,.2);padding:5px 0 4px;margin-top:2px;
+}
+.s7 .ring-center .meta-line{
+  font-family:"IBM Plex Mono",monospace;font-size:8.5px;letter-spacing:.36em;color:rgba(255,200,160,.7);font-weight:600;text-transform:uppercase;
+}
+
+/* ring corner labels (red/blue corner stamps) */
+.s7 .ring-stage .ring-stamp{
+  position:absolute;font-family:"IBM Plex Mono",monospace;font-size:8.5px;letter-spacing:.32em;font-weight:700;
+  text-transform:uppercase;display:flex;align-items:center;gap:6px;
+}
+.s7 .ring-stage .ring-stamp::before{content:"";width:5px;height:5px;border-radius:50%;}
+.s7 .ring-stage .ring-stamp.red{color:rgba(235,90,80,.85);}
+.s7 .ring-stage .ring-stamp.red::before{background:var(--signal);box-shadow:0 0 8px var(--signal);}
+.s7 .ring-stage .ring-stamp.blue{color:rgba(150,180,255,.7);}
+.s7 .ring-stage .ring-stamp.blue::before{background:#5a8bff;box-shadow:0 0 8px #5a8bff;}
+.s7 .ring-stage .ring-stamp.tl{top:14px;left:18px;}
+.s7 .ring-stage .ring-stamp.tr{top:14px;right:18px;}
+.s7 .ring-stage .ring-stamp.bl{bottom:14px;left:18px;}
+.s7 .ring-stage .ring-stamp.br{bottom:14px;right:18px;}
+
+/* meta strip below ring */
+.s7 .ring-meta{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+  font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;font-weight:600;}
+.s7 .ring-meta .cell{
+  padding:10px 12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.03);
+  display:flex;flex-direction:column;gap:3px;}
+.s7 .ring-meta .cell .l{color:rgba(255,255,255,.45);font-size:8px;}
+.s7 .ring-meta .cell .v{color:#fff;font-family:"Unbounded",sans-serif;font-weight:800;letter-spacing:-.02em;font-size:15px;text-transform:uppercase;}
+.s7 .ring-meta .cell .v em{font-style:normal;color:var(--signal);}
+
+/* ── FIGHT CARDS — only undercard + dj room (main event = ring) ── */
+.s7 .cards{display:flex;flex-direction:column;gap:12px;min-height:0;}
+.s7 .fight-card{
+  position:relative;display:flex;flex-direction:column;gap:9px;min-height:0;
+  border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,rgba(20,20,26,.72),rgba(10,10,14,.92));
+  padding:13px 16px;
+  clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,0 100%);
+}
+.s7 .fight-card.undercard{flex:2.4;}
+.s7 .fight-card.dj-room{flex:1.0;
+  background:linear-gradient(180deg,rgba(120,160,255,.08),rgba(10,10,14,.92));
+  border-color:rgba(170,200,255,.18);
+}
+
+.s7 .round-tag{
+  display:flex;align-items:center;gap:10px;
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;font-weight:700;
+}
+.s7 .round-tag .r-num{
+  background:#fff;color:#0a0a0c;padding:3px 8px 2px;letter-spacing:.18em;font-weight:800;
+}
+.s7 .dj-room .round-tag .r-num{background:#aac8ff;color:#0a0a0c;}
+.s7 .round-tag .r-name{color:#fff;letter-spacing:.34em;}
+.s7 .round-tag .r-count{color:rgba(255,255,255,.45);margin-left:auto;font-weight:600;}
+.s7 .round-tag .r-time{color:var(--orange);font-family:"Unbounded",sans-serif;letter-spacing:-.02em;font-size:12px;font-weight:800;text-transform:uppercase;}
+.s7 .dj-room .round-tag .r-time{color:#aac8ff;}
+
+.s7 .roster{display:grid;gap:6px;flex:1;min-height:0;}
+.s7 .undercard .roster{grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(6,1fr);}
+.s7 .dj-room .roster{grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr);}
+
+.s7 .act{
+  position:relative;display:flex;flex-direction:column;justify-content:flex-end;
+  padding:8px 11px 9px;overflow:hidden;min-height:0;
+  border:1px solid rgba(255,255,255,.1);
+  background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.01));
+  clip-path:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,0 100%);
+}
+.s7 .act .name{font-family:"Unbounded",sans-serif;font-weight:800;letter-spacing:-.035em;color:#fff;text-transform:uppercase;line-height:.96;
+  text-shadow:0 8px 18px rgba(0,0,0,.5);}
+.s7 .act .num{position:absolute;right:9px;top:8px;font-family:"IBM Plex Mono",monospace;font-size:8px;letter-spacing:.22em;color:rgba(255,255,255,.4);font-weight:600;}
+
+.s7 .undercard .act .name{font-size:15px;letter-spacing:-.035em;}
+.s7 .undercard .act.long .name{font-size:12px;}
+.s7 .undercard .act.xlong .name{font-size:10.5px;letter-spacing:-.02em;}
+
+.s7 .dj-room .act{
+  background:linear-gradient(160deg,rgba(170,200,255,.08),rgba(40,50,80,.04));
+  border-color:rgba(170,200,255,.16);
+}
+.s7 .dj-room .act::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg,rgba(170,200,255,.65),transparent);
+}
+.s7 .dj-room .act .name{font-size:13px;letter-spacing:-.03em;color:rgba(255,255,255,.96);}
+.s7 .dj-room .act.long .name{font-size:11px;}
+.s7 .dj-room .act .num{color:rgba(170,200,255,.55);}
+
+.s7 .footnote{
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  border-top:1px solid rgba(255,255,255,.14);padding-top:11px;
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.26em;color:rgba(255,255,255,.55);text-transform:uppercase;font-weight:500;
+}
+.s7 .footnote em{font-style:normal;color:var(--signal);font-weight:700;}
+
+/* ═════════════════════════════════════════════════════
+   SLIDE 8 — NUMBERS
+   ═════════════════════════════════════════════════════ */
+.s8{background:var(--paper);color:var(--ink);}
+.s8 .body{position:absolute;inset:96px 96px 64px 96px;display:flex;flex-direction:column;gap:18px;}
+.s8 .body > .stats{flex:1;min-height:0;}
+.s8 .head{display:flex;justify-content:space-between;align-items:flex-end;gap:48px;}
+.s8 h2{
+  font-family:"Unbounded",sans-serif;font-weight:900;font-size:88px;line-height:.86;
+  letter-spacing:-.07em;text-transform:uppercase;color:var(--carbon);max-width:1100px;
+  text-shadow:1px 1px 0 rgba(255,255,255,.42),0 26px 56px rgba(14,13,11,.16);
+}
+.s8 h2 em{font-style:normal;color:var(--signal);text-shadow:1px 1px 0 #fff,3px 3px 0 rgba(0,0,0,.18),0 24px 56px rgba(235,28,36,.32);}
+.s8 .head .meta{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.28em;color:var(--muted);text-align:right;line-height:1.7;text-transform:uppercase;font-weight:500;}
+.s8 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.s8 .stat{
+  position:relative;border:1px solid rgba(14,13,11,.14);padding:32px;
+  display:flex;flex-direction:column;gap:14px;justify-content:space-between;
+  background:#fff;overflow:hidden;min-height:0;
+  box-shadow:0 28px 56px -22px rgba(14,13,11,.22);
+}
+.s8 .stat::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:6px;
+  background:linear-gradient(180deg,var(--signal),var(--orange));
+}
+.s8 .stat .l{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.32em;color:var(--signal);text-transform:uppercase;font-weight:700;}
+.s8 .stat .v{font-family:"Unbounded",sans-serif;font-weight:900;font-size:108px;letter-spacing:-.06em;line-height:.86;color:var(--carbon);
+  text-shadow:1px 1px 0 rgba(255,255,255,.5),0 26px 50px rgba(14,13,11,.16);}
+.s8 .stat .v em{font-style:normal;color:var(--signal);text-shadow:1px 1px 0 #fff,0 24px 48px rgba(235,28,36,.32);}
+.s8 .stat .desc{font-size:14px;line-height:1.55;color:var(--muted);}
+.s8 .stat.dark{background:linear-gradient(180deg,#0c0c10,#16161e);color:#fff;border-color:rgba(255,255,255,.14);box-shadow:0 28px 56px -18px rgba(0,0,0,.45);}
+.s8 .stat.dark::before{background:linear-gradient(180deg,var(--orange),var(--signal));}
+.s8 .stat.dark .l{color:var(--orange);}
+.s8 .stat.dark .v{color:#fff;text-shadow:0 22px 48px rgba(255,144,72,.3);}
+.s8 .stat.dark .v em{color:var(--orange);text-shadow:0 24px 56px rgba(255,144,72,.45);}
+.s8 .stat.dark .desc{color:rgba(255,255,255,.74);}
+.s8 .live-strip{
+  display:grid;grid-template-columns:auto 1fr 1fr 1fr 1fr 1fr;gap:8px;
+  height:170px;
+}
+.s8 .live-strip > *{min-height:0;}
+.s8 .live-strip .label{
+  background:var(--signal);color:#fff;padding:18px 16px;display:flex;flex-direction:column;justify-content:center;gap:6px;min-width:160px;
+  box-shadow:0 18px 36px -14px rgba(235,28,36,.55);
+}
+.s8 .live-strip .label .lab{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:rgba(255,255,255,.82);font-weight:600;}
+.s8 .live-strip .label .v{font-family:"Unbounded",sans-serif;font-weight:800;font-size:26px;letter-spacing:-.04em;text-transform:uppercase;color:#fff;line-height:.92;}
+.s8 .live-strip .frame{position:relative;overflow:hidden;border:1px solid rgba(14,13,11,.18);background:#0a0a0c;height:100%;}
+.s8 .live-strip .frame img{width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;filter:contrast(1.12) saturate(1.1) brightness(.98);}
+.s8 .live-strip .frame::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,.7));pointer-events:none;}
+.s8 .live-strip .frame .tag{position:absolute;left:8px;bottom:8px;font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.28em;color:#fff;text-transform:uppercase;font-weight:600;}
+.s8 .channels{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:18px 24px;background:#0c0c10;color:#fff;
+  box-shadow:0 18px 40px -18px rgba(0,0,0,.5);
+}
+.s8 .channels .l{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.32em;color:rgba(255,255,255,.55);text-transform:uppercase;font-weight:600;}
+.s8 .channels .pills{display:flex;gap:10px;flex-wrap:wrap;}
+.s8 .channels .pills span{
+  font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.28em;
+  text-transform:uppercase;padding:8px 12px;border:1px solid rgba(255,255,255,.2);color:#fff;font-weight:600;
+}
+.s8 .channels .pills span.live{background:var(--signal);border-color:transparent;
+  box-shadow:0 8px 20px -6px rgba(235,28,36,.6);}
+.s8 .channels .pills span.hot{background:linear-gradient(90deg,var(--orange),var(--signal));border-color:transparent;color:#fff;
+  box-shadow:0 8px 20px -6px rgba(255,144,72,.55);}
+
+/* ═════════════════════════════════════════════════════
+   SLIDE 9 — INTEGRATIONS
+   ═════════════════════════════════════════════════════ */
+.s9{background:#0a0a0c;color:#fff;}
+.s9 .stage-bg{position:absolute;inset:0;background:
+  radial-gradient(circle at 100% 0%,rgba(235,28,36,.26),transparent 38%),
+  radial-gradient(circle at 0% 100%,rgba(255,144,72,.28),transparent 38%),
+  linear-gradient(180deg,#0a0a0c,#06060a);}
+.s9 .body{position:absolute;inset:120px 96px 100px 96px;display:grid;grid-template-columns:1fr 1fr;gap:48px;}
+.s9 .col-l{display:flex;flex-direction:column;justify-content:space-between;}
+.s9 h2{
+  font-family:"Unbounded",sans-serif;font-weight:900;font-size:104px;line-height:.86;
+  letter-spacing:-.075em;color:#fff;text-transform:uppercase;
+  text-shadow:2px 2px 0 var(--signal),4px 4px 0 rgba(0,0,0,.5),0 32px 70px rgba(235,28,36,.32);
+}
+.s9 h2 em{font-style:normal;color:var(--signal);}
+.s9 .lead{font-size:21px;color:rgba(255,255,255,.78);line-height:1.55;margin-top:24px;max-width:680px;}
+.s9 .lead strong{color:#fff;font-weight:600;}
+.s9 .blocks{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:30px;}
+.s9 .blk{
+  position:relative;
+  border:1px solid rgba(255,255,255,.18);
+  background:linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,.02));
+  padding:24px;display:flex;flex-direction:column;gap:6px;
+  clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,0 100%);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.12) inset,
+    0 22px 40px -20px rgba(0,0,0,.55),
+    0 50px 90px -42px rgba(235,28,36,.16);
+  -webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);
+}
+.s9 .blk .num{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.3em;color:var(--signal);text-transform:uppercase;font-weight:700;}
+.s9 .blk .name{font-family:"Unbounded",sans-serif;font-weight:700;font-size:24px;letter-spacing:-.03em;color:#fff;text-transform:uppercase;line-height:.96;}
+.s9 .blk .d{font-size:12px;line-height:1.5;color:rgba(255,255,255,.66);margin-top:6px;}
+.s9 .col-r{position:relative;display:grid;grid-template-rows:1.4fr 1fr;gap:14px;min-height:0;}
+.s9 .col-r > *{min-height:0;}
+.s9 .photo{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.12);height:100%;}
+.s9 .photo img{width:100%;height:100%;object-fit:cover;object-position:center 30%;filter:contrast(1.12) saturate(1.1);display:block;}
+.s9 .photo .ovr{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 60%,rgba(0,0,0,.78));}
+.s9 .photo .stamp{position:absolute;left:18px;top:18px;background:var(--signal);color:#fff;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.32em;padding:8px 12px;text-transform:uppercase;font-weight:700;
+  box-shadow:0 14px 30px -10px rgba(235,28,36,.55);}
+.s9 .photo .cap{position:absolute;left:18px;bottom:18px;right:18px;display:flex;justify-content:space-between;color:#fff;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.28em;text-transform:uppercase;font-weight:600;}
+.s9 .photo-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;height:100%;min-height:0;}
+.s9 .photo-row > .photo{height:100%;}
+
+/* ═════════════════════════════════════════════════════
+   SLIDE 10 — ART & EXPERIENCE
+   ═════════════════════════════════════════════════════ */
+.s10{background:var(--paper);color:var(--ink);}
+.s10 .body{position:absolute;inset:120px 96px 100px 96px;display:grid;grid-template-columns:1fr 1.05fr;gap:48px;}
+.s10 .col-l{position:relative;border:1px solid rgba(14,13,11,.14);background:#fff;padding:42px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;
+  box-shadow:0 32px 64px -28px rgba(14,13,11,.28);}
+.s10 .col-l::after{content:"";position:absolute;right:-120px;top:-120px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(235,28,36,.24),transparent 70%);}
+.s10 .col-l .accent{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.32em;color:var(--signal);text-transform:uppercase;font-weight:700;}
+.s10 .col-l h2{
+  font-family:"Unbounded",sans-serif;font-weight:900;font-size:96px;line-height:.86;
+  letter-spacing:-.07em;text-transform:uppercase;color:var(--carbon);margin-top:18px;
+  text-shadow:1px 1px 0 rgba(255,255,255,.42),0 26px 56px rgba(14,13,11,.18);
+}
+.s10 .col-l h2 em{font-style:normal;color:var(--signal);text-shadow:1px 1px 0 #fff,3px 3px 0 rgba(0,0,0,.18),0 24px 56px rgba(235,28,36,.32);}
+.s10 .col-l ul{list-style:none;display:flex;flex-direction:column;gap:14px;margin-top:36px;}
+.s10 .col-l ul li{font-size:18px;line-height:1.45;color:var(--ink);padding:18px 20px;border:1px solid rgba(14,13,11,.16);background:rgba(14,13,11,.02);display:flex;align-items:center;gap:16px;}
+.s10 .col-l ul li::before{content:"";width:10px;height:10px;background:var(--signal);box-shadow:0 0 12px rgba(235,28,36,.4);}
+.s10 .col-l .quote{font-family:"Unbounded",sans-serif;font-weight:700;font-size:26px;letter-spacing:-.03em;color:var(--carbon);text-transform:uppercase;line-height:1.05;margin-top:auto;border-top:1px solid rgba(14,13,11,.16);padding-top:24px;}
+.s10 .col-l .quote em{font-style:normal;color:var(--signal);}
+.s10 .col-r{display:grid;grid-template-rows:1.2fr 1fr;gap:14px;min-height:0;}
+.s10 .col-r > *{min-height:0;}
+.s10 .photo{position:relative;overflow:hidden;border:1px solid rgba(14,13,11,.14);height:100%;
+  box-shadow:0 24px 50px -22px rgba(14,13,11,.32);}
+.s10 .photo img{width:100%;height:100%;object-fit:cover;object-position:center 30%;filter:contrast(1.1) saturate(1.08);display:block;}
+.s10 .photo .stamp{position:absolute;left:18px;top:18px;background:var(--signal);color:#fff;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.32em;padding:8px 12px;text-transform:uppercase;font-weight:700;box-shadow:0 14px 30px -10px rgba(235,28,36,.55);}
+.s10 .photo .cap{position:absolute;left:0;right:0;bottom:0;padding:18px 22px;background:linear-gradient(0deg,rgba(0,0,0,.92),transparent);color:#fff;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.32em;text-transform:uppercase;display:flex;justify-content:space-between;font-weight:600;}
+.s10 .photo-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;height:100%;min-height:0;}
+.s10 .photo-row > .photo{height:100%;}
+
+/* ═════════════════════════════════════════════════════
+   SLIDE 11 — CLOSING
+   ═════════════════════════════════════════════════════ */
+.s11{background:#0a0a0c;color:#fff;}
+.s11 .stage-bg{position:absolute;inset:0;background:
+  radial-gradient(ellipse at 18% 28%,rgba(235,28,36,.4),transparent 44%),
+  radial-gradient(ellipse at 82% 72%,rgba(255,144,72,.28),transparent 42%),
+  linear-gradient(180deg,#0d0d11,#06060a);}
+.s11 .ph-cover{
+  position:absolute;left:0;top:0;bottom:0;width:46%;opacity:.34;
+  filter:contrast(1.18) saturate(1.05) brightness(.88);
+}
+.s11 .ph-cover img{width:100%;height:100%;object-fit:cover;object-position:center 30%;}
+.s11 .ph-cover::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 0%,#0a0a0c 96%);
+}
+.s11 .ghost{
+  position:absolute;left:-2%;bottom:-12%;font-family:"Unbounded",sans-serif;
+  font-weight:900;font-size:560px;line-height:.78;letter-spacing:-.09em;
+  color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.06);
+  text-transform:uppercase;pointer-events:none;
+}
+.s11 .body{position:absolute;inset:120px 96px 100px 96px;display:flex;flex-direction:column;justify-content:space-between;gap:24px;}
+.s11 .top{display:flex;flex-direction:column;gap:24px;}
+.s11 h2{
+  font-family:"Unbounded",sans-serif;font-weight:900;font-size:164px;line-height:.84;
+  letter-spacing:-.085em;text-transform:uppercase;color:#fff;
+  text-shadow:2px 2px 0 var(--signal),4px 4px 0 rgba(0,0,0,.55),0 36px 80px rgba(235,28,36,.34);
+}
+.s11 h2 em{font-style:normal;color:var(--signal);}
+.s11 h2 .out{color:transparent;-webkit-text-stroke:2.5px rgba(255,255,255,.78);text-shadow:none;}
+.s11 .pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:36px;}
+.s11 .pillar{
+  position:relative;
+  border:1px solid rgba(255,255,255,.2);background:linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,.02));padding:26px;
+  display:flex;flex-direction:column;gap:10px;
+  clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,0 100%);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.12) inset,
+    0 24px 48px -24px rgba(0,0,0,.6),
+    0 60px 100px -50px rgba(235,28,36,.22);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+}
+.s11 .pillar::after{
+  content:"";position:absolute;left:0;top:0;width:60%;height:1px;
+  background:linear-gradient(90deg,rgba(255,255,255,.32),transparent);
+}
+.s11 .pillar .num{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.32em;color:var(--signal);text-transform:uppercase;font-weight:700;}
+.s11 .pillar .name{font-family:"Unbounded",sans-serif;font-weight:800;font-size:26px;letter-spacing:-.03em;color:#fff;text-transform:uppercase;line-height:.95;
+  text-shadow:0 14px 32px rgba(0,0,0,.55);}
+.s11 .bottom{
+  display:flex;justify-content:space-between;align-items:flex-end;gap:48px;
+  border-top:1px solid rgba(255,255,255,.16);padding-top:32px;
+}
+.s11 .bottom .closer{
+  font-family:"Unbounded",sans-serif;font-weight:800;font-size:54px;letter-spacing:-.05em;
+  text-transform:uppercase;line-height:.96;max-width:1100px;color:#fff;
+  text-shadow:0 22px 48px rgba(0,0,0,.5);
+}
+.s11 .bottom .closer em{font-style:normal;color:var(--orange);}
+.s11 .bottom .cta{
+  display:flex;flex-direction:column;align-items:flex-end;gap:14px;text-align:right;
+}
+.s11 .bottom .cta .lab{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.32em;color:rgba(255,255,255,.6);text-transform:uppercase;font-weight:600;}
+.s11 .bottom .cta .v{font-family:"Unbounded",sans-serif;font-weight:900;font-size:42px;letter-spacing:-.04em;color:#fff;
+  text-shadow:0 0 22px rgba(255,144,72,.45),0 22px 48px rgba(0,0,0,.5);}
+.s11 .bottom .cta .v em{font-style:normal;color:var(--signal);}
+.s11 .stak-seal{
+  position:absolute;right:96px;top:140px;width:240px;opacity:.78;z-index:3;
+  filter:drop-shadow(0 22px 48px rgba(0,0,0,.55)) drop-shadow(0 0 22px rgba(235,28,36,.22));
+  pointer-events:none;
+}
+.s11 .stak-seal img{width:100%;height:auto;display:block;mix-blend-mode:screen;}
+.s11 .stak-seal .ring{
+  position:absolute;inset:-22px;border:1px solid rgba(255,255,255,.16);border-radius:50%;
+}
+.s11 .stak-seal .ring::after{
+  content:"original mark · since 2024";position:absolute;left:50%;top:-12px;transform:translateX(-50%);
+  background:#0a0a0c;padding:4px 10px;
+  font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.32em;
+  color:rgba(255,255,255,.55);text-transform:uppercase;font-weight:600;
+}
+
+/* ────── PRINT (PDF) ────── */
+@page{size:1920px 1080px;margin:0;}
+@media print{
+  html,body{background:transparent;width:1920px;}
+  body{margin:0;}
+  .deck{gap:0;width:1920px;}
+  .slide{transform:none !important;margin-bottom:0 !important;width:1920px;height:1080px;}
+  /* Heavy raster-baking effects disabled in print to keep PDF light & fast */
+  .lens-flare,.glow-orb,.light-beam,.noise,.scanlines{display:none !important;}
+  .edge-vignette{opacity:.6;}
+  .dot-overlay{display:none !important;}
+  /* Disable backdrop blurs that force rasterization */
+  *{
+    -webkit-backdrop-filter:none !important;backdrop-filter:none !important;
+  }
+  /* Simpler text shadows — single layer instead of stacks */
+  .s1 h1.title,.s2 h2,.s3 .head h2,.s4 .col-l h2,.s5 h2,.s6 h2,.s7 h2,.s8 h2,.s9 h2,.s10 .col-l h2,.s11 h2{
+    text-shadow:0 4px 12px rgba(0,0,0,.35) !important;
+  }
+  .s1 .lead-meta .date,.s11 .bottom .cta .v{text-shadow:none !important;}
+  /* Strip mix-blend-mode to avoid raster fallback */
+  *{mix-blend-mode:normal !important;}
+  /* Drop-shadow filters force raster output — replace with box-shadow on parents */
+  .chrome-mark .stak img,.s11 .stak-seal,.s11 .stak-seal img{filter:none !important;}
+  /* Photo filters force raster — keep simpler */
+  .s4 .photo img,.s5 .photo img,.s9 .photo img,.s10 .photo img,.s8 .live-strip .frame img,.s3 .card .card-photo img{
+    filter:none !important;
+  }
+}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  function fit(){
+    var scale = Math.min(1, window.innerWidth / 1920);
+    document.documentElement.style.setProperty('--screen-scale', scale);
+  }
+  fit();
+  window.addEventListener('resize', fit);
+  document.addEventListener('DOMContentLoaded', fit);
+})();
+</script>
+
+<div class="deck">
+
+<!-- ═════════════ SLIDE 1 — COVER ═════════════ -->
+<section class="slide s1 chrome-dark">
+  <div class="stage-bg"></div>
+  <div class="lens-flare tl"></div>
+  <div class="lens-flare br orange"></div>
+  <div class="glow-orb red" style="left:-12%;top:30%;width:540px;height:540px;"></div>
+  <div class="glow-orb orange" style="right:-10%;bottom:8%;width:480px;height:480px;"></div>
+  <div class="ph-cover"><img src="images/2026-04-28 22.04.55.jpg" alt=""/></div>
+  <div class="light-beam"></div>
+  <div class="light-beam red"></div>
+  <div class="dot-grid"></div>
+  <div class="dot-overlay"></div>
+  <div class="noise"></div>
+  <div class="edge-vignette"></div>
+  <div class="ghost">STAK</div>
+  <div class="ghost-2">DAY</div>
+
+  <div class="chrome-top">
+    <div class="chrome-mark"><span class="stak"><img src="images/logo stak.svg" alt="STAK"/></span><span class="tail">.tusa<span class="x">×</span><span class="partner">badclub</span></span></div>
+    <span>file · 001 · stak × badclub</span>
+    <span>06.06.2026 · moscow · ru</span>
+  </div>
+
+  <div class="body">
+    <div class="top-row">
+      <div class="badge-row">
+        <span class="signal-chip">live mode · season open</span>
+        <span class="editorial-label dark">Strategy presentation · v1</span>
+      </div>
+      <div class="top-meta">
+        <span class="mono" style="color:rgba(255,255,255,.55);">performance · drop · scene · art</span>
+        <span class="mono" style="color:rgba(255,255,255,.55);">hosted by stak.tusa · badclub</span>
+      </div>
+    </div>
+
+    <div>
+      <h1 class="title">STAK<span class="x">×</span><em>BADCLUB</em></h1>
+      <div class="logo-trio">
+        <span class="triad"><span class="dot"></span><b>STAK.TUSA</b><span style="opacity:.55;">community / culture</span></span>
+        <span class="triad"><span class="dot"></span><b>BAD CLUB</b><span style="opacity:.55;">scene / drop</span></span>
+        <span class="triad"><span class="dot"></span><b>SEASON&nbsp;OPEN</b><span style="opacity:.55;">06.06 / flakon</span></span>
+      </div>
+    </div>
+
+    <div class="lead">
+      <div class="lead-left">
+        <h2><em>STAK DAY</em> — открытие лета.<br>самая мощная точка входа в&nbsp;новый сезон.</h2>
+        <p>STAK&nbsp;×&nbsp;BADCLUB собирают в одном пространстве музыку, моду, уличную культуру и современное искусство. Каждый гость становится частью происходящего — а&nbsp;не зрителем за&nbsp;бортом.</p>
+      </div>
+      <div class="lead-meta">
+        <span class="where">дизайн завод флакон · москва</span>
+        <span class="date">06<span>.</span>06<span>.</span>26</span>
+        <span class="where">открытие лета · 18+</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="red-bar">
+    <span>STAK × BADCLUB</span><span>SEASON OPEN · 06.06.2026</span><span>FLAKON · MOSCOW</span><span>ART · STREET · SOUND · DROP</span><span>NOT A PARTY · AN EXPERIENCE</span>
+  </div>
+</section>
+
+<!-- ═════════════ SLIDE 2 — CONCEPT ═════════════ -->
+<section class="slide s2 chrome-light">
+  <div class="lens-flare tl orange soft" style="opacity:.4;"></div>
+  <div class="lens-flare br soft" style="opacity:.35;"></div>
+  <div class="dot-grid light"></div>
+  <div class="dot-overlay light"></div>
+  <div class="noise"></div>
+  <div class="edge-vignette light"></div>
+  <div class="ghost">CULT&shy;URE</div>
+
+  <div class="chrome-top">
+    <div class="chrome-mark"><span class="stak"><img src="images/logo stak.svg" alt="STAK"/></span><span class="tail">.tusa<span class="x">×</span><span class="partner">badclub</span></span></div>
+    <span>02 / 12 · concept</span>
+    <span>scene system · v1</span>
+  </div>
+
+  <div class="body">
+    <div class="head">
+      <span class="editorial-label">Концепция · 02</span>
+      <h2>Это<br>больше,<br>чем&nbsp;<em>событие.</em></h2>
+      <p class="lead">STAK × BADCLUB — это <strong>комьюнити нового формата</strong>, объединяющее музыку, моду, уличную культуру и современное искусство. Мы создаём пространство, где каждый гость становится частью происходящего — это не ивент, это <strong>культурная среда, которая формирует тренды</strong>.</p>
+
+      <div class="pillars">
+        <div class="pillar"><span class="num">01 / sound</span><span class="name">Музыка</span></div>
+        <div class="pillar"><span class="num">02 / drip</span><span class="name">Мода</span></div>
+        <div class="pillar"><span class="num">03 / street</span><span class="name">Уличная<br>культура</span></div>
+        <div class="pillar"><span class="num">04 / art</span><span class="name">Искусство</span></div>
+      </div>
+    </div>
+
+    <div class="feat">
+      <div class="label">Operating engine · live · drop · scene · art</div>
+      <h3>Среда, которая<br>формирует тренды</h3>
+      <ul>
+        <li>Живые выступления</li>
+        <li>Показы коллекций</li>
+        <li>Арт-инсталляции и&nbsp;выставки</li>
+        <li>Иммерсивные зоны</li>
+        <li>Перформансы и&nbsp;контесты</li>
+      </ul>
+      <div class="stats">
+        <div class="cell"><div class="v">3<em>000</em>+</div><div class="l">гостей</div></div>
+        <div class="cell"><div class="v">16+</div><div class="l">активных зон</div></div>
+        <div class="cell"><div class="v">44</div><div class="l">артистов · dj</div></div>
+        <div class="cell"><div class="v">22→06</div><div class="l">час · нон-стоп</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-bot">
+    <span>sound · art · drip · stage · crowd</span>
+    <span>cult.tusa · 06.06.26</span>
+  </div>
+</section>
+
+<!-- ═════════════ SLIDE 3 — FORMAT ═════════════ -->
+<section class="slide s3 chrome-dark">
+  <div class="stage-bg"></div>
+  <div class="lens-flare tl"></div>
+  <div class="lens-flare br orange soft"></div>
+  <div class="glow-orb red" style="left:-8%;top:-10%;width:520px;height:520px;"></div>
+  <div class="glow-orb orange" style="right:-6%;bottom:-12%;width:460px;height:460px;"></div>
+  <div class="light-beam"></div>
+  <div class="dot-grid"></div>
+  <div class="dot-overlay"></div>
+  <div class="noise"></div>
+  <div class="edge-vignette"></div>
+
+  <div class="chrome-top">
+    <div class="chrome-mark"><span class="stak"><img src="images/logo stak.svg" alt="STAK"/></span><span class="tail">.tusa<span class="x">×</span><span class="partner">badclub</span></span></div>
+    <span>03 / 12 · format</span>
+    <span>city in city · multi-format</span>
+  </div>
+
+  <div class="body">
+    <div class="head">
+      <h2>Больше,<br>чем&nbsp;<em>вечеринка.</em></h2>
+      <div class="meta">Масштабный мультиформатный ивент<br>синтез фестиваля, выставки и&nbsp;городского<br>культурного пространства. формат:<br><em style="color:#fff;font-style:normal;">«город в&nbsp;городе» — каждая зона = отдельный мир</em>.</div>
+    </div>
+
+    <div class="grid">
+
+      <div class="card accent">
+        <div class="card-top">
+          <span class="num">01 / sound</span>
+          <span class="name">Музыка</span>
+          <span class="desc">Иммерсивное путешествие: электронная сцена с переходом в hip-hop, нарастающая динамика, синхронизация звука и&nbsp;света.</span>
+          <ul><li>live</li><li>dj-set</li><li>sync</li><li>till morning</li></ul>
+        </div>
+        <div class="card-photo">
+          <img src="live/street-bw.jpg" alt="music"/>
+          <span class="corner-mark">live</span>
+          <span class="stamp">stage · open</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-top">
+          <span class="num">02 / drip</span>
+          <span class="name">Мода</span>
+          <span class="desc">Показы и&nbsp;презентации STAK&nbsp;&amp;&nbsp;BADCLUB, fashion-маркеты локальных брендов, capsule-дропы.</span>
+          <ul><li>runway</li><li>capsule</li><li>market</li></ul>
+        </div>
+        <div class="card-photo">
+          <img src="images/2026-04-28 22.05.15.jpg" alt="fashion"/>
+          <span class="corner-mark">drip</span>
+          <span class="stamp">drop · 06.06</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-top">
+          <span class="num">03 / street</span>
+          <span class="name">Уличная<br>культура</span>
+          <span class="desc">Мотокросс на&nbsp;входе как шоу, баскетбол, фристайл, танцы, граффити, бойцовский ринг с&nbsp;контестами.</span>
+          <ul><li>moto</li><li>court</li><li>graffiti</li><li>ring</li></ul>
+        </div>
+        <div class="card-photo">
+          <img src="live/2026-04-27_19_19_07.jpg" alt="street"/>
+          <span class="corner-mark">street</span>
+          <span class="stamp">contest · live</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-top">
+          <span class="num">04 / art</span>
+          <span class="name">Искусство</span>
+          <span class="desc">Выставка скульптур, экспозиции современных художников, картины, арт-объекты, интеграция искусства в&nbsp;пространство.</span>
+          <ul><li>sculpt</li><li>art-objects</li><li>expo</li></ul>
+        </div>
+        <div class="card-photo">
+          <img src="images/6.jpg" alt="art"/>
+          <span class="corner-mark">art</span>
+          <span class="stamp">expo · 06.06</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-top">
+          <span class="num">05 / show</span>
+          <span class="name">Шоу &amp;<br>иммерсив</span>
+          <span class="desc">Мотокросс как перформанс, STAK-свадьба, тату-зона, интерактивные инсталляции и&nbsp;эффект полного погружения.</span>
+          <ul><li>moto-show</li><li>tattoo</li><li>installations</li></ul>
+        </div>
+        <div class="card-photo">
+          <img src="images/4.jpg" alt="show"/>
+          <span class="corner-mark">show</span>
+          <span class="stamp">live · perform</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="ticker">
+    <span><em>///</em> sound</span><span><em>///</em> drip</span><span><em>///</em> street</span><span><em>///</em> art</span><span><em>///</em> show</span><span><em>///</em> immersive</span><span><em>///</em> stak × badclub</span>
+  </div>
+</section>
+
+<!-- ═════════════ SLIDE 4 — VENUE ═════════════ -->
+<section class="slide s4 chrome-light">
+  <div class="lens-flare tr orange soft" style="opacity:.45;"></div>
+  <div class="lens-flare bl soft" style="opacity:.3;"></div>
+  <div class="dot-grid light"></div>
+  <div class="dot-overlay light"></div>
+  <div class="noise"></div>
+  <div class="edge-vignette light"></div>
+
+  <div class="chrome-top">
+    <div class="chrome-mark"><span class="stak"><img src="images/logo stak.svg" alt="STAK"/></span><span class="tail">.tusa<span class="x">×</span><span class="partner">badclub</span></span></div>
+    <span>04 / 12 · venue</span>
+    <span>design plant flakon · moscow</span>
+  </div>
+
+  <div class="body">
+    <div class="col-l">
+      <div>
+        <span class="editorial-label">Площадка · 04</span>
+        <h2>Дизайн<br>завод<br><em>флакон.</em></h2>
+        <p><strong>Культовое креативное пространство Москвы</strong>. Индустриальная эстетика и&nbsp;современная инфраструктура, открытые и&nbsp;закрытые зоны, полная техническая и&nbsp;сервисная база.</p>
+      </div>
+      <div class="features">
+        <div class="f"><span class="l">01 / zones</span><span class="v">Открытые &amp;<br>закрытые зоны</span></div>
+        <div class="f"><span class="l">02 / sound</span><span class="v">Сцена · свет<br>звук</span></div>
+        <div class="f"><span class="l">03 / led</span><span class="v">LED-экраны</span></div>
+        <div class="f"><span class="l">04 / outdoor</span><span class="v">Летние<br>пространства</span></div>
+        <div class="f"><span class="l">05 / infra</span><span class="v">Полная<br>инфраструктура</span></div>
+        <div class="f"><span class="l">06 / identity</span><span class="v">Идентичность<br>места</span></div>
+      </div>
+    </div>
+
+    <div class="col-r">
+      <div class="photo hero">
+        <span class="stamp-tl">flakon · 06.06.26</span>
+        <span class="hero-glow"></span>
+        <img src="images/П4.JPG" alt="venue exterior night"/>
+        <div class="ovr">
+          <span class="l">main façade · night mode · neon-lit</span>
+          <span class="v">Industrial<br>cathedral</span>
+        </div>
+      </div>
+      <div class="photo-row triple">
+        <div class="photo">
+          <img src="images/П1.JPG" alt="venue aerial"/>
+          <div class="ovr"><span class="l">02 / aerial</span><span class="v">City<br>in city</span></div>
+        </div>
+        <div class="photo">
+          <img src="images/П2.JPG" alt="indoor"/>
+          <div class="ovr"><span class="l">03 / indoor</span><span class="v">Loft<br>arena</span></div>
+        </div>
+        <div class="photo">
+          <img src="images/П3.JPG" alt="open floor"/>
+          <div class="ovr"><span class="l">04 / floor</span><span class="v">Blank<br>canvas</span></div>
+        </div>
+      </div>
+      <div class="photo-row">
+        <div class="photo">
+          <img src="images/venue-tv-wall.jpg" alt="tv-wall installation inside venue"/>
+          <div class="ovr"><span class="l">05 / inside</span><span class="v">Wall<br>of&nbsp;eyes</span></div>
+        </div>
+        <div class="photo">
+          <img src="images/venue-interior.jpg" alt="open floor inside venue"/>
+          <div class="ovr"><span class="l">06 / loft</span><span class="v">Open<br>canvas</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-bot">
+    <span>дизайн завод флакон · москва · 2026</span>
+    <span>capacity · 3 000+ guests</span>
+  </div>
+</section>
+
+<!-- ═════════════ SLIDE 5 — AUDIENCE ═════════════ -->
+<section class="slide s5 chrome-dark">
+  <div class="stage-bg"></div>
+  <div class="lens-flare tr orange"></div>
+  <div class="glow-orb red" style="right:-8%;top:8%;width:480px;height:480px;"></div>
+  <div class="glow-orb orange" style="left:-10%;bottom:-10%;width:520px;height:520px;"></div>
+  <div class="light-beam cross"></div>
+  <div class="dot-grid"></div>
+  <div class="dot-overlay"></div>
+  <div class="noise"></div>
+  <div class="edge-vignette"></div>
+
+  <div class="chrome-top">
+    <div class="chrome-mark"><span class="stak"><img src="images/logo stak.svg" alt="STAK"/></span><span class="tail">.tusa<span class="x">×</span><span class="partner">badclub</span></span></div>
+    <span>05 / 12 · audience</span>
+    <span>culture makers · 18-45</span>
+  </div>
+
+  <div class="body">
+    <div class="col-l">
+      <span class="editorial-label dark">Аудитория · 05</span>
+      <h2>Наши<br>гости —<br><em>создатели<br>культуры.</em></h2>
+      <div class="age">
+        <span class="v">18 — 45</span>
+        <span class="l">years · core</span>
+      </div>
+      <div class="lists">
+        <div class="col">
+          <div class="h">Интересы</div>
+          <ul>
+            <li>Хип-хоп и&nbsp;электронная музыка</li>
+            <li>Streetwear и&nbsp;мода</li>
+            <li>Уличный спорт и&nbsp;танцы</li>
+            <li>Тату-культура</li>
+            <li>Digital и&nbsp;контент</li>
+            <li>Современное искусство</li>
+            <li>Живопись, скульптура, визуальные формы</li>
+          </ul>
+        </div>
+        <div class="col">
+          <div class="h">Поведение</div>
+          <ul>
+            <li>Создают тренды</li>
+            <li>Активно генерируют контент</li>
+            <li>Ценят уникальность и&nbsp;эстетику</li>
+            <li>Вовлечены в&nbsp;культурную среду</li>
+            <li>Хедлайнеры локальной сцены</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="photo">
+        <span class="stamp">portrait · core</span>
+        <span class="frame"></span>
+        <img src="images/8.jpg" alt="guest portrait"/>
+        <div class="cap">Они уже здесь —<br>осталось <em>встретиться.</em></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><div class="v">55<em>%</em> · 45<em>%</em></div><div class="l">female · male</div></div>
+        <div class="stat"><div class="v">мск<em>+</em>мо</div><div class="l">доход средний и&nbsp;выше</div></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><div class="v">culture<em>-</em>first</div><div class="l">trend setters · live</div></div>
+        <div class="stat"><div class="v">UGC<em>×</em>10M</div><div class="l">контент-потенциал</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-bot">
+    <span>культура · стиль · комьюнити · идентичность</span>
+    <span>stak audience map · 2026</span>
+  </div>
+</section>
+
+<!-- ═════════════ SLIDE 6 — CITY IN CITY ═════════════ -->
+<section class="slide s6 chrome-light">
+  <div class="lens-flare tl orange soft" style="opacity:.4;"></div>
+  <div class="lens-flare br soft" style="opacity:.3;"></div>
+  <div class="dot-grid light"></div>
+  <div class="dot-overlay light"></div>
+  <div class="noise"></div>
+  <div class="edge-vignette light"></div>
+  <div class="ghost">CITY</div>
+
+  <div class="chrome-top">
+    <div class="chrome-mark"><span class="stak"><img src="images/logo stak.svg" alt="STAK"/></span><span class="tail">.tusa<span class="x">×</span><span class="partner">badclub</span></span></div>
+    <span>06 / 12 · space</span>
+    <span>city in city · 7 zones</span>
+  </div>
+
+  <div class="body">
+    <div class="head">
+      <div>
+        <span class="editorial-label">Пространство · 06</span>
+        <h2>Город<br><em>в&nbsp;городе.</em></h2>
+      </div>
+      <div class="ix">7 зон · 7 миров<br>каждая = отдельная сцена<br>с&nbsp;собственной атмосферой</div>
+    </div>
+
+    <div class="grid">
+
+      <div class="zone feat">
+        <span class="corner"></span>
+        <div class="zone-body">
+          <span class="num">01 / first contact</span>
+          <span class="ttl">Мотокросс<br>на&nbsp;входе</span>
+          <span class="desc">Первый кадр. Визуальный шок, энергия, контент. Мотокросс&nbsp;— это не просто шоу, это сразу заявка на&nbsp;уровень.</span>
+          <span class="meta-row">moto · perform · entry</span>
+        </div>
+      </div>
+
+      <div class="zone dual">
+        <div class="zone-body">
+          <span class="corner"></span>
+          <span class="num">02 / arena</span>
+          <span class="ttl">Бойцовский<br>ринг</span>
+          <span class="desc">Контесты, перформансы, шоу-форматы и&nbsp;вовлечение зрителей.</span>
+          <span class="meta-row">contest · show · live</span>
+        </div>
+        <div class="zone-photo"><img src="live/1.jpg" alt="ring"/></div>
+      </div>
+
+      <div class="zone dual">
+        <div class="zone-body">
+          <span class="corner"></span>
+          <span class="num">03 / culture</span>
+          <span class="ttl">ART-зона</span>
+          <span class="desc">Скульптуры, картины, выставочные пространства. Интеграция искусства в&nbsp;уличную культуру.</span>
+          <span class="meta-row">sculpt · paint · expo</span>
+        </div>
+        <div class="zone-photo"><img src="images/433 бар (3).jpg" alt="art"/></div>
+      </div>
+
+      <div class="zone">
+        <span class="corner"></span>
+        <div class="zone-body">
+          <span class="num">04 / love</span>
+          <span class="ttl">STAK-свадьба</span>
+          <span class="desc">Фан-ЗАГС с&nbsp;вирусным потенциалом — мем, который видели все.</span>
+          <span class="meta-row">viral · fun · ugc</span>
+        </div>
+      </div>
+
+      <div class="zone">
+        <span class="corner"></span>
+        <div class="zone-body">
+          <span class="num">05 / drop</span>
+          <span class="ttl">Fashion-маркет</span>
+          <span class="desc">Локальные бренды, capsule-дропы, эксклюзивы.</span>
+          <span class="meta-row">drip · local · capsule</span>
+        </div>
+      </div>
+
+      <div class="zone">
+        <span class="corner"></span>
+        <div class="zone-body">
+          <span class="num">06 / chill</span>
+          <span class="ttl">Лаунджи<br>&amp; бары</span>
+          <span class="desc">Зоны отдыха, разговоров, нетворка.</span>
+          <span class="meta-row">drink · talk · network</span>
+        </div>
+      </div>
+
+      <div class="zone">
+        <span class="corner"></span>
+        <div class="zone-body">
+          <span class="num">07 / move</span>
+          <span class="ttl">Фристайл<br>&amp; танцы</span>
+          <span class="desc">Открытые перформансы, баттлы, dance-floor.</span>
+          <span class="meta-row">battle · move · live</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="chrome-bot">
+    <span>moto · ring · art · love · drop · chill · move</span>
+    <span>stak space map · 2026</span>
+  </div>
+</section>
+
+<!-- ═════════════ SLIDE 7 — PRE-EVENT · ДВОР 90Х ═════════════ -->
+<section class="slide s-dvor chrome-dark">
+  <div class="stage-bg"></div>
+  <div class="lens-flare tl"></div>
+  <div class="lens-flare br orange"></div>
+  <div class="glow-orb red" style="left:-10%;top:-12%;width:540px;height:540px;"></div>
+  <div class="glow-orb orange" style="right:-12%;bottom:-10%;width:520px;height:520px;"></div>
+  <div class="light-beam"></div>
+  <div class="light-beam red"></div>
+  <div class="dot-grid"></div>
+  <div class="dot-overlay"></div>
+  <div class="noise"></div>
+  <div class="edge-vignette"></div>
+  <div class="ghost">DVOR<br>90X</div>
+
+  <div class="chrome-top">
+    <div class="chrome-mark"><span class="stak"><img src="images/logo stak.svg" alt="STAK"/></span><span class="tail">.tusa<span class="x">×</span><span class="partner">badclub</span></span></div>
+    <span>07 / 12 · pre-event</span>
+    <span>traffic engine · влияние · хайп</span>
+  </div>
+
+  <div class="body">
+    <div class="head">
+      <div class="head-left">
+        <span class="pre-tag">pre-event · traffic engine · 07</span>
+        <div class="title-row">
+          <h2>ДВОР&nbsp;<em>90Х</em></h2>
+          <div class="by-cred">
+            <span class="l">// шоу</span>
+            <span class="v"><em>футбол</em>&nbsp;×&nbsp;<em>бои</em></span>
+            <span class="l">новый вид спорта</span>
+          </div>
+        </div>
+        <div class="sub">Перед STAK&nbsp;DAY проходит <em>трафикообразующее инфлюенс-мероприятие</em> — медийные команды состязаются в&nbsp;новом виде спорта.</div>
+      </div>
+      <div class="head-right">
+        <span class="l">// промоушен</span>
+        <span class="vs-block">@DVOR<em>90X</em></span>
+        <span class="l">youtube · telegram · instagram</span>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="hero">
+        <span class="stamp-tl">● версус-формат</span>
+        <span class="stamp-tr">live · principle</span>
+        <div class="img-wrap">
+          <img src="images/dvor/hero-vs.jpg" alt="рэперы vs блогеры — версус формат игры Двор 90х"/>
+        </div>
+        <div class="ovr">
+          <div>
+            <span class="ttl-l">главная интрига</span>
+            <div class="ttl">Рэперы&nbsp;<em>vs</em>&nbsp;Блогеры.<br>Стримеры&nbsp;<em>vs</em>&nbsp;Спортсмены.</div>
+          </div>
+          <div class="meta">олимпийские чемпионы<br>vs уличные парни<br>· каждый идёт до&nbsp;конца</div>
+        </div>
+      </div>
+
+      <div class="side">
+        <div class="num-card hot">
+          <span class="l">// нарезки · shorts · reels</span>
+          <span class="v">20<em>M</em><sup>+</sup></span>
+          <span class="desc"><strong>До&nbsp;20&nbsp;млн</strong> на&nbsp;нарезках матча — TikTok / Reels / Shorts.</span>
+        </div>
+        <div class="num-card">
+          <span class="l">// полный выпуск</span>
+          <span class="v">400<em>K</em><sup>+</sup></span>
+          <span class="desc"><strong>До&nbsp;400&nbsp;тыс.</strong> на&nbsp;каждом выпуске YouTube/VK.</span>
+        </div>
+        <div class="lineup">
+          <span class="stamp">инфлюенсеры проекта</span>
+          <img src="images/dvor/lineup.jpg" alt="инфлюенсеры проекта Двор 90х: TSAR_65, Khamzat_Kosmos, Тимур Никулин, Edward Bil, Егор Шип и др."/>
+          <div class="cap">12+ топ-инфлюенсеров &amp;&nbsp;<em>звёздных команд</em></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rules">
+      <div class="rules-ttl">
+        <span class="l">// правила</span>
+        <span class="v">Одни&nbsp;<em>на&nbsp;двоих.</em></span>
+      </div>
+      <div class="rules-list">
+        <div class="rule score">
+          <span class="delta">+1</span>
+          <div class="body-r">
+            <span class="num">01 / гол</span>
+            <span class="name">Один гол —<br>одно очко</span>
+          </div>
+        </div>
+        <div class="rule fight">
+          <span class="delta">+1</span>
+          <div class="body-r">
+            <span class="num">02 / схватка</span>
+            <span class="name">Победа в&nbsp;драке —<br>+1 очко</span>
+          </div>
+        </div>
+        <div class="rule coward">
+          <span class="delta">−2</span>
+          <div class="body-r">
+            <span class="num">03 / отказ</span>
+            <span class="name">Дал заднюю —<br>минус два очка</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="strip">
+      <span class="l">media teams</span>
+      <div class="pills">
+        <span>блогеры</span><span>рэперы</span><span>стримеры</span><span>спортсмены</span><span>чемпионы-комментаторы</span><span>звёздные гости</span>
+        <span class="live">● viral content</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-bot">
+    <span>дворовый футбол × медийные бои · хайп перед STAK DAY</span>
+    <span>traffic engine · v1</span>
+  </div>
+</section>
+
+<!-- ═════════════ SLIDE 8 — ARENA / RING NIGHT ═════════════ -->
+<section class="slide s7 chrome-dark">
+  <div class="stage-bg"></div>
+  <div class="lens-flare center soft"></div>
+  <div class="glow-orb red" style="left:50%;top:-12%;transform:translateX(-50%);width:640px;height:640px;"></div>
+  <div class="glow-orb orange" style="left:50%;bottom:-14%;transform:translateX(-50%);width:560px;height:560px;"></div>
+  <div class="light-beam"></div>
+  <div class="dot-grid"></div>
+  <div class="dot-overlay"></div>
+  <div class="noise"></div>
+  <div class="edge-vignette"></div>
+
+  <div class="chrome-top">
+    <div class="chrome-mark"><span class="stak"><img src="images/logo stak.svg" alt="STAK"/></span><span class="tail">.tusa<span class="x">×</span><span class="partner">badclub</span></span></div>
+    <span>08 / 12 · arena</span>
+    <span>octagon · 360° · 44 acts</span>
+  </div>
+
+  <div class="body">
+    <div class="head">
+      <div class="title-block">
+        <span class="arena-tag">stak arena · live · 360°</span>
+        <h2>Артисты —&nbsp;<em>в&nbsp;ринге.</em><br>Зрители —&nbsp;вокруг.</h2>
+      </div>
+      <div class="lead">Сцена-октагон в&nbsp;центре зала. Артисты и&nbsp;диджеи бьют live в&nbsp;360° перед публикой со&nbsp;всех сторон. Три раунда — один вечер.</div>
+    </div>
+
+    <div class="arena">
+      <!-- RING zone — main event happens HERE -->
+      <div class="ring-zone">
+        <div class="ring-stage">
+          <span class="ring-stamp red tl">red corner</span>
+          <span class="ring-stamp red tr">06.06.26</span>
+          <span class="ring-stamp blue bl">blue corner</span>
+          <span class="ring-stamp blue br">360° pov</span>
+
+          <svg viewBox="0 0 1000 1000" aria-hidden="true">
+            <defs>
+              <radialGradient id="s7-spot" cx="50%" cy="55%" r="42%">
+                <stop offset="0%" stop-color="rgba(235,28,36,0.55)"/>
+                <stop offset="55%" stop-color="rgba(235,28,36,0.10)"/>
+                <stop offset="100%" stop-color="rgba(235,28,36,0)"/>
+              </radialGradient>
+              <radialGradient id="s7-canvas" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="rgba(40,8,10,0.9)"/>
+                <stop offset="100%" stop-color="rgba(8,8,12,1)"/>
+              </radialGradient>
+            </defs>
+
+            <!-- spotlight halo on the canvas -->
+            <circle cx="500" cy="540" r="380" fill="url(#s7-spot)"/>
+
+            <!-- ROPES: outer to mid octagon edges -->
+            <g stroke="rgba(255,255,255,0.22)" stroke-width="1.2">
+              <line x1="614.8" y1="222.8" x2="591.8" y2="278.2"/>
+              <line x1="777.2" y1="385.2" x2="721.8" y2="408.2"/>
+              <line x1="777.2" y1="614.8" x2="721.8" y2="591.8"/>
+              <line x1="614.8" y1="777.2" x2="591.8" y2="721.8"/>
+              <line x1="385.2" y1="777.2" x2="408.2" y2="721.8"/>
+              <line x1="222.8" y1="614.8" x2="278.2" y2="591.8"/>
+              <line x1="222.8" y1="385.2" x2="278.2" y2="408.2"/>
+              <line x1="385.2" y1="222.8" x2="408.2" y2="278.2"/>
+            </g>
+
+            <!-- OUTER octagon (red glow) r=300 -->
+            <polygon points="614.8,222.8 777.2,385.2 777.2,614.8 614.8,777.2 385.2,777.2 222.8,614.8 222.8,385.2 385.2,222.8"
+                     fill="none" stroke="rgba(235,28,36,0.9)" stroke-width="2.5"
+                     style="filter:drop-shadow(0 0 14px rgba(235,28,36,0.7));"/>
+
+            <!-- MID octagon r=240 -->
+            <polygon points="591.8,278.2 721.8,408.2 721.8,591.8 591.8,721.8 408.2,721.8 278.2,591.8 278.2,408.2 408.2,278.2"
+                     fill="rgba(20,5,8,0.4)" stroke="rgba(255,255,255,0.20)" stroke-width="1.2"/>
+
+            <!-- INNER stage octagon r=160 -->
+            <polygon points="561.2,352.1 647.9,439.4 647.9,560.6 561.2,647.9 438.8,647.9 352.1,560.6 352.1,439.4 438.8,352.1"
+                     fill="rgba(235,28,36,0.05)" stroke="rgba(255,255,255,0.45)" stroke-width="1.4"
+                     stroke-dasharray="4 4"/>
+
+            <!-- crosshairs through center inside stage -->
+            <g stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="3 5">
+              <line x1="500" y1="352.1" x2="500" y2="647.9"/>
+              <line x1="352.1" y1="500" x2="647.9" y2="500"/>
+            </g>
+
+            <!-- corner dots: red top + bottom (red corner), blue diagonals -->
+            <g>
+              <circle cx="614.8" cy="222.8" r="7" fill="#eb1c24" style="filter:drop-shadow(0 0 12px rgba(235,28,36,0.9));"/>
+              <circle cx="614.8" cy="777.2" r="7" fill="#eb1c24" style="filter:drop-shadow(0 0 12px rgba(235,28,36,0.9));"/>
+              <circle cx="385.2" cy="222.8" r="7" fill="#5a8bff" style="filter:drop-shadow(0 0 10px rgba(90,139,255,0.85));"/>
+              <circle cx="385.2" cy="777.2" r="7" fill="#5a8bff" style="filter:drop-shadow(0 0 10px rgba(90,139,255,0.85));"/>
+              <circle cx="777.2" cy="385.2" r="4" fill="rgba(255,255,255,0.65)"/>
+              <circle cx="777.2" cy="614.8" r="4" fill="rgba(255,255,255,0.65)"/>
+              <circle cx="222.8" cy="385.2" r="4" fill="rgba(255,255,255,0.65)"/>
+              <circle cx="222.8" cy="614.8" r="4" fill="rgba(255,255,255,0.65)"/>
+            </g>
+
+            <!-- side guide-lines pointing to headliners (subtle radial spokes) -->
+            <g stroke="rgba(255,255,255,0.08)" stroke-width="1">
+              <line x1="500" y1="500" x2="500" y2="223"/>
+              <line x1="500" y1="500" x2="696.4" y2="303.6"/>
+              <line x1="500" y1="500" x2="777" y2="500"/>
+              <line x1="500" y1="500" x2="696.4" y2="696.4"/>
+              <line x1="500" y1="500" x2="500" y2="777"/>
+              <line x1="500" y1="500" x2="303.6" y2="696.4"/>
+              <line x1="500" y1="500" x2="223" y2="500"/>
+              <line x1="500" y1="500" x2="303.6" y2="303.6"/>
+            </g>
+          </svg>
+
+          <!-- 8 HEADLINERS at the 8 sides of the octagon -->
+          <div class="headliner-corner" style="--x:50%;--y:9%;">
+            <span class="role">title · live</span>
+            <span class="name">Жак Энтони</span>
+            <span class="num">01</span>
+          </div>
+          <div class="headliner-corner" style="--x:80%;--y:21%;">
+            <span class="role">title · live</span>
+            <span class="name">Благо Вайт</span>
+            <span class="num">02</span>
+          </div>
+          <div class="headliner-corner" style="--x:91%;--y:50%;">
+            <span class="role">title · r&amp;b</span>
+            <span class="name">Кристина<br>Си</span>
+            <span class="num">03</span>
+          </div>
+          <div class="headliner-corner" style="--x:80%;--y:79%;">
+            <span class="role">title · hip-hop</span>
+            <span class="name">Гафур</span>
+            <span class="num">04</span>
+          </div>
+          <div class="headliner-corner" style="--x:50%;--y:91%;">
+            <span class="role">title · pop</span>
+            <span class="name">ANDRO</span>
+            <span class="num">05</span>
+          </div>
+          <div class="headliner-corner" style="--x:20%;--y:79%;">
+            <span class="role">title · pop</span>
+            <span class="name">Адель</span>
+            <span class="num">06</span>
+          </div>
+          <div class="headliner-corner" style="--x:9%;--y:50%;">
+            <span class="role">title · alt</span>
+            <span class="name">Биовульф</span>
+            <span class="num">07</span>
+          </div>
+          <div class="headliner-corner" style="--x:20%;--y:21%;">
+            <span class="role">title · hip-hop</span>
+            <span class="name">DONI</span>
+            <span class="num">08</span>
+          </div>
+
+          <!-- center brand: this IS the main event card -->
+          <div class="ring-center">
+            <span class="badge">● R 01 · main event</span>
+            <span class="presents">stak<span class="x">×</span>badclub presents</span>
+            <span class="brand">ARENA</span>
+            <span class="date">06 · 06 · 26</span>
+            <span class="meta-line">8 headliners · 360° pov</span>
+          </div>
+        </div>
+
+        <!-- meta strip below ring -->
+        <div class="ring-meta">
+          <div class="cell"><span class="l">// rounds</span><span class="v"><em>3</em>&nbsp;БЛОКА</span></div>
+          <div class="cell"><span class="l">// roster</span><span class="v">44 acts</span></div>
+          <div class="cell"><span class="l">// pov</span><span class="v">360°</span></div>
+          <div class="cell"><span class="l">// time</span><span class="v">22→06</span></div>
+        </div>
+      </div>
+
+      <!-- FIGHT CARDS — undercard + dj room (main event lives in the ring) -->
+      <div class="cards">
+        <!-- ROUND 2 — UNDERCARD -->
+        <div class="fight-card undercard">
+          <div class="round-tag">
+            <span class="r-num">R&nbsp;02</span>
+            <span class="r-name">undercard · artists</span>
+            <span class="r-time">00 → 04</span>
+            <span class="r-count">24 / 44</span>
+          </div>
+          <div class="roster">
+            <div class="act"><span class="name">ARSUL</span><span class="num">09</span></div>
+            <div class="act long"><span class="name">Грустная<br>Тусовщица</span><span class="num">10</span></div>
+            <div class="act"><span class="name">KEYNASTY</span><span class="num">11</span></div>
+            <div class="act"><span class="name">Eroiera</span><span class="num">12</span></div>
+            <div class="act"><span class="name">Metox</span><span class="num">13</span></div>
+            <div class="act"><span class="name">ASHY 43</span><span class="num">14</span></div>
+            <div class="act"><span class="name">G4OUR</span><span class="num">15</span></div>
+            <div class="act"><span class="name">RVMZES</span><span class="num">16</span></div>
+            <div class="act"><span class="name">ARITA</span><span class="num">17</span></div>
+            <div class="act long"><span class="name">DIMA URIH</span><span class="num">18</span></div>
+            <div class="act"><span class="name">ROXXI</span><span class="num">19</span></div>
+            <div class="act xlong"><span class="name">ZAUR&amp;<br>MEIRINKITO</span><span class="num">20</span></div>
+            <div class="act"><span class="name">ARINTU</span><span class="num">21</span></div>
+            <div class="act long"><span class="name">CHERNO-<br>SHEY</span><span class="num">22</span></div>
+            <div class="act long"><span class="name">Игнатий<br>Винтуров</span><span class="num">23</span></div>
+            <div class="act"><span class="name">FLOCKAA</span><span class="num">24</span></div>
+            <div class="act long"><span class="name">LUVDA-<br>KASH</span><span class="num">25</span></div>
+            <div class="act"><span class="name">SUDEAL</span><span class="num">26</span></div>
+            <div class="act xlong"><span class="name">КИСЛО-СЛАДКИЙ<br>с&nbsp;БОНА</span><span class="num">27</span></div>
+            <div class="act"><span class="name">EKHO017</span><span class="num">28</span></div>
+            <div class="act"><span class="name">LYAPO</span><span class="num">29</span></div>
+            <div class="act"><span class="name">Апрель</span><span class="num">30</span></div>
+            <div class="act"><span class="name">Блинк</span><span class="num">31</span></div>
+            <div class="act long"><span class="name">Молодой<br>Владимир</span><span class="num">32</span></div>
+          </div>
+        </div>
+
+        <!-- ROUND 3 — DJ ROOM -->
+        <div class="fight-card dj-room">
+          <div class="round-tag">
+            <span class="r-num">R&nbsp;03</span>
+            <span class="r-name">dj room · electronica</span>
+            <span class="r-time">22 → 00</span>
+            <span class="r-count">12 / 44</span>
+          </div>
+          <div class="roster">
+            <div class="act"><span class="name">KIIDA</span><span class="num">33</span></div>
+            <div class="act long"><span class="name">STAS SATORI</span><span class="num">34</span></div>
+            <div class="act long"><span class="name">RUSLAN<br>FYUCHA</span><span class="num">35</span></div>
+            <div class="act long"><span class="name">PRETTY VARDI</span><span class="num">36</span></div>
+            <div class="act long"><span class="name">SAYNO-<br>MOCUZ</span><span class="num">37</span></div>
+            <div class="act long"><span class="name">Яна<br>Индигарка</span><span class="num">38</span></div>
+            <div class="act long"><span class="name">ANNA DARK</span><span class="num">39</span></div>
+            <div class="act"><span class="name">PTICHKA</span><span class="num">40</span></div>
+            <div class="act"><span class="name">SHABA</span><span class="num">41</span></div>
+            <div class="act"><span class="name">EZZA</span><span class="num">42</span></div>
+            <div class="act"><span class="name">HAMZEY</span><span class="num">43</span></div>
+            <div class="act long"><span class="name">MARI<br>KRASSO</span><span class="num">44</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footnote">
+      <span><em>+</em> special guests · secret line · кураторские блоки</span>
+      <span>3 rounds · 44 acts · 1 night · 06.06.26</span>
+    </div>
+  </div>
+
+  <div class="chrome-bot">
+    <span>ring · main event · undercard · dj room · 360° · live</span>
+    <span>arena · v3</span>
+  </div>
+</section>
+
+<!-- ═════════════ SLIDE 8 — NUMBERS ═════════════ -->
+<section class="slide s8 chrome-light">
+  <div class="lens-flare tr orange soft" style="opacity:.4;"></div>
+  <div class="lens-flare bl soft" style="opacity:.3;"></div>
+  <div class="dot-grid light"></div>
+  <div class="dot-overlay light"></div>
+  <div class="noise"></div>
+  <div class="edge-vignette light"></div>
+
+  <div class="chrome-top">
+    <div class="chrome-mark"><span class="stak"><img src="images/logo stak.svg" alt="STAK"/></span><span class="tail">.tusa<span class="x">×</span><span class="partner">badclub</span></span></div>
+    <span>09 / 12 · numbers</span>
+    <span>scale · reach · ugc</span>
+  </div>
+
+  <div class="body">
+    <div class="head">
+      <div>
+        <span class="editorial-label">Метрики · 09</span>
+        <h2>Цифры,<br>которые&nbsp;<em>работают.</em></h2>
+      </div>
+      <div class="meta">live · охват · контент<br>платформа · билеты · мерч · контент</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <span class="l">01 / on-site</span>
+        <span class="v">3 000<em>+</em></span>
+        <span class="desc">Гостей на&nbsp;площадке. Прямой контакт с&nbsp;брендом и&nbsp;сценой STAK&nbsp;×&nbsp;BADCLUB.</span>
+      </div>
+      <div class="stat dark">
+        <span class="l">02 / forecast</span>
+        <span class="v">5M<em>+</em></span>
+        <span class="desc">Прогнозируемый охват: SMM, медиа, инфлюенсеры, артисты, площадка.</span>
+      </div>
+      <div class="stat">
+        <span class="l">03 / ugc</span>
+        <span class="v">10M<em>+</em></span>
+        <span class="desc">Потенциал user-generated content: каждая зона создаёт повод для&nbsp;контента.</span>
+      </div>
+    </div>
+
+    <div class="live-strip">
+      <div class="label"><span class="lab">live moments</span><span class="v">UGC<br>engine</span></div>
+      <div class="frame"><img src="images/3.jpg" alt=""/><span class="tag">stage · 01</span></div>
+      <div class="frame"><img src="images/2026-04-28 22.05.22.jpg" alt=""/><span class="tag">crowd · 02</span></div>
+      <div class="frame"><img src="images/5.jpg" alt=""/><span class="tag">live · 03</span></div>
+      <div class="frame"><img src="images/10.jpg" alt=""/><span class="tag">drip · 04</span></div>
+      <div class="frame"><img src="images/9.jpg" alt=""/><span class="tag">art · 05</span></div>
+    </div>
+
+    <div class="channels">
+      <span class="l">channels</span>
+      <div class="pills">
+        <span>instagram</span><span>telegram</span><span>VK</span><span>youtube</span><span>digital · ooh</span><span>influencers</span><span>press</span><span class="hot">+ ДВОР 90Х · 20M views</span>
+      </div>
+      <span class="pills"><span class="live">● live · 06.06.26</span></span>
+    </div>
+  </div>
+
+  <div class="chrome-bot">
+    <span>3 000+ on-site · 5M+ reach · 10M+ ugc · pre-event 20M+</span>
+    <span>STAK × BADCLUB · 2026</span>
+  </div>
+</section>
+
+<!-- ═════════════ SLIDE 9 — INTEGRATIONS ═════════════ -->
+<section class="slide s9 chrome-dark">
+  <div class="stage-bg"></div>
+  <div class="lens-flare tr"></div>
+  <div class="lens-flare bl orange soft"></div>
+  <div class="glow-orb red" style="right:-12%;top:-8%;width:520px;height:520px;"></div>
+  <div class="glow-orb orange" style="left:-14%;bottom:-12%;width:480px;height:480px;"></div>
+  <div class="light-beam"></div>
+  <div class="dot-grid"></div>
+  <div class="dot-overlay"></div>
+  <div class="noise"></div>
+  <div class="edge-vignette"></div>
+
+  <div class="chrome-top">
+    <div class="chrome-mark"><span class="stak"><img src="images/logo stak.svg" alt="STAK"/></span><span class="tail">.tusa<span class="x">×</span><span class="partner">badclub</span></span></div>
+    <span>10 / 12 · integrations</span>
+    <span>brand inside the experience</span>
+  </div>
+
+  <div class="body">
+    <div class="col-l">
+      <div>
+        <span class="editorial-label dark">Интеграции · 10</span>
+        <h2>Бренд<br>становится<br>частью&nbsp;<em>опыта.</em></h2>
+        <p class="lead">Не «логотип на баннере», а живая роль внутри сценария. <strong>Партнёр получает свой ритуал и&nbsp;контентный поток</strong> — собственная сцена, активация или&nbsp;зона со&nbsp;своим характером.</p>
+      </div>
+      <div class="blocks">
+        <div class="blk"><span class="num">01 / moto</span><span class="name">Мотокросс-зона</span><span class="d">Активация на&nbsp;входе. Высокая концентрация контента и&nbsp;эмоций.</span></div>
+        <div class="blk"><span class="num">02 / ring</span><span class="name">Бойцовский<br>ринг</span><span class="d">Спецпроект с&nbsp;контестами, шоу-форматом и&nbsp;вовлечением.</span></div>
+        <div class="blk"><span class="num">03 / art</span><span class="name">Арт-пространство</span><span class="d">Кураторская выставка, скульптуры, sculpting-акции.</span></div>
+        <div class="blk"><span class="num">04 / immersive</span><span class="name">Иммерсив</span><span class="d">Интерактивные инсталляции, со&nbsp;сценарием перехода.</span></div>
+        <div class="blk" style="grid-column:span 2;"><span class="num">05 / digital</span><span class="name">Digital-интеграции</span><span class="d">Контент-потоки, прямые трансляции, AR-форматы и&nbsp;перенос события в&nbsp;соцсети.</span></div>
+      </div>
+    </div>
+
+    <div class="col-r">
+      <div class="photo">
+        <span class="stamp">activation · live</span>
+        <img src="uploads/1776697983714-ef48cdc4-photo-2026-04-20-18-08-09.jpg" alt="activation"/>
+        <div class="ovr"></div>
+        <div class="cap"><span>brand inside</span><span>06.06.26</span></div>
+      </div>
+      <div class="photo-row">
+        <div class="photo">
+          <span class="stamp">crew · live</span>
+          <img src="uploads/1776698030469-e79b964b-photo-2026-04-20-18-08-02.jpg" alt="crew"/>
+          <div class="ovr"></div>
+        </div>
+        <div class="photo">
+          <span class="stamp">ugc · engine</span>
+          <img src="uploads/1776698014926-d992b184-photo-2026-04-20-18-08-12.jpg" alt="ugc"/>
+          <div class="ovr"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-bot">
+    <span>moto · ring · art · immersive · digital</span>
+    <span>partner blueprint · 2026</span>
+  </div>
+</section>
+
+<!-- ═════════════ SLIDE 10 — ART & EXPERIENCE ═════════════ -->
+<section class="slide s10 chrome-light">
+  <div class="lens-flare tl orange soft" style="opacity:.45;"></div>
+  <div class="lens-flare br soft" style="opacity:.3;"></div>
+  <div class="dot-grid light"></div>
+  <div class="dot-overlay light"></div>
+  <div class="noise"></div>
+  <div class="edge-vignette light"></div>
+
+  <div class="chrome-top">
+    <div class="chrome-mark"><span class="stak"><img src="images/logo stak.svg" alt="STAK"/></span><span class="tail">.tusa<span class="x">×</span><span class="partner">badclub</span></span></div>
+    <span>11 / 12 · art &amp; experience</span>
+    <span>culture statement</span>
+  </div>
+
+  <div class="body">
+    <div class="col-l">
+      <span class="accent">усиление · 11</span>
+      <h2>Искусство —<br><em>часть среды.</em></h2>
+      <ul>
+        <li>Выставки картин и&nbsp;графики</li>
+        <li>Скульптурные инсталляции</li>
+        <li>Коллаборации с&nbsp;художниками</li>
+        <li>Арт как элемент сценария</li>
+      </ul>
+      <div class="quote">Ивент становится не&nbsp;только развлечением, <em>но&nbsp;и&nbsp;культурным высказыванием.</em></div>
+    </div>
+
+    <div class="col-r">
+      <div class="photo">
+        <span class="stamp">portrait · expo</span>
+        <img src="uploads/1776698054833-3493d131-photo-2026-04-20-18-08-00.jpg" alt="art"/>
+        <div class="cap"><span>art · zone</span><span>flakon · 06.06</span></div>
+      </div>
+      <div class="photo-row">
+        <div class="photo">
+          <span class="stamp">sculpt</span>
+          <img src="uploads/1776698004045-9fd0a627-photo-2026-04-20-18-08-19.jpg" alt="art"/>
+          <div class="cap"><span>collab</span><span>006</span></div>
+        </div>
+        <div class="photo">
+          <span class="stamp">paint</span>
+          <img src="uploads/1776698023676-07a1aa02-photo-2026-04-20-18-08-23.jpg" alt="art"/>
+          <div class="cap"><span>artists</span><span>007</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-bot">
+    <span>art · sculpt · paint · culture · statement</span>
+    <span>11 / 12 · v1</span>
+  </div>
+</section>
+
+<!-- ═════════════ SLIDE 11 — CLOSING ═════════════ -->
+<section class="slide s11 chrome-dark">
+  <div class="stage-bg"></div>
+  <div class="lens-flare tl"></div>
+  <div class="lens-flare br orange"></div>
+  <div class="glow-orb red" style="left:18%;top:30%;width:560px;height:560px;"></div>
+  <div class="glow-orb orange" style="right:18%;bottom:25%;width:520px;height:520px;"></div>
+  <div class="ph-cover"><img src="images/2026-04-28 22.05.26.jpg" alt=""/></div>
+  <div class="light-beam"></div>
+  <div class="light-beam red"></div>
+  <div class="dot-grid"></div>
+  <div class="dot-overlay"></div>
+  <div class="noise"></div>
+  <div class="edge-vignette"></div>
+  <div class="ghost">EXPE<br>RIENCE</div>
+
+  <div class="stak-seal">
+    <img src="images/logo stak.svg" alt="STAK"/>
+  </div>
+
+  <div class="chrome-top">
+    <div class="chrome-mark"><span class="stak"><img src="images/logo stak.svg" alt="STAK"/></span><span class="tail">.tusa<span class="x">×</span><span class="partner">badclub</span></span></div>
+    <span>12 / 12 · why it matters</span>
+    <span>not a party · an experience</span>
+  </div>
+
+  <div class="body">
+    <div class="top">
+      <span class="editorial-label dark">Финальный кадр · 12</span>
+      <h2>Это <span class="out">не</span><br><em>вечеринка.</em><br>Это опыт.</h2>
+      <div class="pillars">
+        <div class="pillar"><span class="num">01 / form</span><span class="name">Новая форма<br>событий</span></div>
+        <div class="pillar"><span class="num">02 / synthesis</span><span class="name">Синтез искусства,<br>музыки и&nbsp;урбана</span></div>
+        <div class="pillar"><span class="num">03 / voice</span><span class="name">Платформа<br>самовыражения</span></div>
+        <div class="pillar"><span class="num">04 / engine</span><span class="name">Генератор<br>трендов</span></div>
+      </div>
+    </div>
+    <div class="bottom">
+      <div class="closer">STAK × BADCLUB —<br><em>опыт, который проживают.</em></div>
+      <div class="cta">
+        <span class="lab">контакт · даты · условия</span>
+        <span class="v">06<em>.</em>06<em>.</em>26</span>
+        <span class="lab">дизайн завод флакон · москва</span>
+        <span class="v" style="font-size:26px;color:var(--orange);">staktusa.ru</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+</body>
+</html>
